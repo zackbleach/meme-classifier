@@ -1,6 +1,6 @@
 package com.zackbleach.memetable.contentextraction.test;
 
-import static com.zackbleach.memetable.util.ImageScrapeUtils.getImageFromSite;
+import static com.zackbleach.memetable.util.ClassificationUtils.getImageFromSite;
 
 import java.awt.Image;
 import java.io.IOException;

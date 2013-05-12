@@ -15,7 +15,8 @@ import com.zackbleach.memetable.contentextraction.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Searcher;
 import com.zackbleach.memetable.util.ImageViewer;
 
-import static com.zackbleach.memetable.util.ImageScrapeUtils.getImageFromSite;
+import static com.zackbleach.memetable.util.ClassificationUtils.getImageFromSite;
+import static com.zackbleach.memetable.util.ClassificationUtils.classifyMeme;
 
 public class SearcherTest {
 	
@@ -24,8 +25,6 @@ public class SearcherTest {
 	public static final String INTERNET_WIFE_IMAGE = "http://29.media.tumblr.com/tumblr_lrmu85jCWf1qb5gkjo1_400.jpg";
 	public static final String INSANITY_WOLF_IMAGE = "https://i.chzbgr.com/maxW500/7027276544/h190097E5/";
 	
-	private Searcher searcher = new Searcher();
-
 	@Test
 	public void accuracyPhilosoraptor() throws IOException, URISyntaxException {
 		Assert.assertTrue(classifyMeme(PHILOSORAPTOR_IMAGE).equals(Searcher.PHILOSORAPTOR));
@@ -40,13 +39,7 @@ public class SearcherTest {
 	public void accuracyInsanityWolf() throws IOException, URISyntaxException {
 		Assert.assertTrue(classifyMeme(INSANITY_WOLF_IMAGE).equals(Searcher.INSANITY_WOLF));
 	}
-	
-	public String classifyMeme(String path) throws IOException, URISyntaxException {
-		BufferedImage meme = getImageFromSite(path);
-		searcher.search(meme);
-		return searcher.getSimplifiedResult();
-	}
-	
+
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		//main method to allow us to see the image downloaded
 		MemeExtractor scraper = new MemeExtractor();
