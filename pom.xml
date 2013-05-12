@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.mangofactory.swagger</groupId>
-	<artifactId>swagger-springmvc-test</artifactId>
-	<version>0.5.0-SNAPSHOT</version>
+	<groupId>com.zackbleach.memetable</groupId>
+	<artifactId>memetable</artifactId>
+	<version>0.1</version>
 	<packaging>war</packaging>
 	<properties>
 		<spring.version>3.2.1.RELEASE</spring.version>
@@ -93,7 +93,27 @@
             <artifactId>spring-hateoas</artifactId>
             <version>0.3.0.RELEASE</version>
         </dependency>
-    </dependencies>
+        <dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+		</dependency>
+	<dependency>
+		<groupId>commons-validator</groupId>
+		<artifactId>commons-validator</artifactId>
+		<version>1.4.0</version>
+	</dependency>
+	<dependency>
+		<groupId>net.semanticmetadata</groupId>
+		<artifactId>lire</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -102,7 +122,7 @@
 				<version>6.1.26</version>
 				<configuration>
 					<webAppConfig>
-						<contextPath>/swagger-springmvc-test</contextPath>
+						<contextPath>/docs</contextPath>
 					</webAppConfig>
 					<connectors>
 						<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
