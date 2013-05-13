@@ -6,3 +6,5 @@ target/surefire
 target/swagger-springmvc-test-0.0.1-SNAPSHOT
 target/swagger-springmvc-test-0.0.1-SNAPSHOT.war
 target
+src/main/resources/Memes
+src/main/resources/index
