@@ -4,11 +4,13 @@ public class TopMeme {
 
 	private int rank;
 	private String name;
+	private float certainty;
 	private int instances;
 	
-	public TopMeme(int rank, String name, int instances) {
+	public TopMeme(int rank, String name, float certainty, int instances) {
 		this.rank = rank;
 		this.name = name;
+		this.certainty = certainty;
 		this.instances = instances;
 	}
 	
@@ -30,5 +32,11 @@ public class TopMeme {
 	public void setInstances(int instances) {
 		this.instances = instances;
 	}
-	
+	public float getCertainty() {
+		return certainty;
+	}
+
+	public void setCertainty(float certainty) {
+		this.certainty = certainty;
+	}
 }

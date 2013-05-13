@@ -29,6 +29,12 @@ public class Indexer {
 	public static final String INSANITY_WOLF_DIR = "insanitywolf";
 	public static final String PHILOSORAPTOR_DIR = "philosoraptor";
 	public static final String INTERNETWIFE_DIR = "interwebwife";
+	public static final String SCUMBAG_STEVE_DIR = "scumbagsteve";
+	public static final String FOUL_BACHELOR_DIR = "foulbachelor";
+	public static final String ADVICE_MALLARD_DIR = "advicemallard";
+	public static final String SUCCESS_KID_DIR = "successkid";
+	public static final String BAD_ADVICE_MALLARD_DIR = "badadvicemallard";
+	public static final String GOOD_GUY_GREG_DIR = "goodguygreg";
 	
     public static void index() throws IOException {
     	

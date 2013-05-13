@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import com.zackbleach.memetable.contentextraction.MemeExtractor;
+import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.imagerecognition.Searcher;
 
 public class ClassificationUtils {
@@ -15,7 +16,7 @@ public class ClassificationUtils {
 		return meme;
 	}
 	
-	public static String classifyMeme(String path) throws IOException, URISyntaxException {
+	public static Result classifyMeme(String path) throws IOException, URISyntaxException {
 		Searcher searcher = new Searcher();
 		BufferedImage meme = getImageFromSite(path);
 		searcher.search(meme);
