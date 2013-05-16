@@ -1,0 +1,10 @@
+Eclipse files
+.classpath
+.project
+.settings
+
+# build artifacts
+target/
+
+#OS X Stuff
+.DS_STORE
