@@ -13,6 +13,7 @@ public class TopMeme {
 		this.name = name;
 		this.certainty = certainty;
 		this.instances = instances;
+		this.downloaded = downloaded;
 	}
 	
 	public int getRank() {

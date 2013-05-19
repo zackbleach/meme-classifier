@@ -23,11 +23,25 @@ public class ImageScrapeUtils {
 		return meme;
 	}
 	
-	public static void saveImage(String path, String folder) throws IOException, URISyntaxException {
-		BufferedImage image = getImageFromSite(path);
-		String[] parts = path.split("/");
-		ImageIO.write(image, "jpg" ,
-				new File(folder + parts[parts.length-1]));
+	public static boolean saveImage(String path, String folder) {
+		try {
+			String[] parts = path.split("/");
+			File file = new File(folder+parts[parts.length - 1]);
+			if (!file.exists()) {
+				BufferedImage image = getImageFromSite(path);
+				ImageIO.write(image, "jpg", file);
+				log.warn("Saved file to disk: " + file.getName());
+				return true;
+			} else {
+				return true;
+			}
+		} catch (IOException ioe) {
+			log.warn("Problem saving image: " + path, ioe);
+		} catch (URISyntaxException urie) {
+			log.warn("Problem saving image: " + path, urie);
+		}
+		return false;
+		
 	}
 	
 	

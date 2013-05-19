@@ -32,31 +32,27 @@ public class TopMemeController {
 	private static final Logger log = Logger.getLogger(TopMemeController.class);
 
     @RequestMapping(value = "/top", method = RequestMethod.GET)
-    public ResponseEntity<TopMemes> getEffective(UriComponentsBuilder builder, boolean downloadUnknown) 
-    		throws JsonParseException, JsonMappingException, IOException, URISyntaxException {
+    public ResponseEntity<TopMemes> getEffective(boolean downloadUnknown) 
+    		throws IOException, JsonParseException, JsonMappingException {
     	//Could use response body here as well
     	Indexer.index();
     	RedditScraper scraper = new RedditScraper();
     	List<String> paths = scraper.scrape();
-    	List<TopMeme> results = getTopMemes(paths);
+    	List<TopMeme> results = getTopMemes(paths, downloadUnknown);
     	TopMemes top = new TopMemes();
     	top.setTopMemes(results);
         return new ResponseEntity<TopMemes>(top, HttpStatus.OK);
     }
 
-	private List<TopMeme> getTopMemes(List<String> paths) throws IOException, URISyntaxException {
+	private List<TopMeme> getTopMemes(List<String> paths, boolean downloadUnknown) {
     	List<TopMeme> results = new ArrayList<TopMeme>();
     	int index = 1;
 		for (String path : paths) {
 	    	boolean downloaded = false;
     	    Result r = attemptToRetrieveFromCache(path);
-    		if (r == null) {
-    			r = ClassificationUtils.classifyMeme(path);
-    			if (r.getCertainty() < 0.5) {
-    				ImageScrapeUtils.saveImage(path, "/dowloaededMemes");
-    				downloaded = true;
+    			if (r.getCertainty() < 0.5 && downloadUnknown ) {
+    					downloaded = ImageScrapeUtils.saveImage(path, "downloadedMemes/");
     			}
-    		}
     		results.add(new TopMeme(index, r.getMeme(), r.getCertainty(), 9001, downloaded));
     		index++;
     	}
