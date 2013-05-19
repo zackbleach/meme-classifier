@@ -17,7 +17,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.zackbleach.memetable.cache.MemeCache;
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
 import com.zackbleach.memetable.domainobject.TopMeme;
 import com.zackbleach.memetable.domainobject.TopMemes;
 import com.zackbleach.memetable.imagerecognition.Indexer;
@@ -33,62 +32,44 @@ public class TopMemeController {
 	private static final Logger log = Logger.getLogger(TopMemeController.class);
 
     @RequestMapping(value = "/top", method = RequestMethod.GET)
-    public ResponseEntity<TopMemes> getEffective(UriComponentsBuilder builder) 
+    public ResponseEntity<TopMemes> getEffective(UriComponentsBuilder builder, boolean downloadUnknown) 
     		throws JsonParseException, JsonMappingException, IOException, URISyntaxException {
     	//Could use response body here as well
     	Indexer.index();
     	RedditScraper scraper = new RedditScraper();
     	List<String> paths = scraper.scrape();
-    	List<Result> myMemes = new ArrayList<Result>();
-    	for (String path : paths) {
-    	    Result r = null;
-    		try {
-				r = MemeCache.getInstance().getCache().get(path);
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-    		if (r == null) {
-    			r = ClassificationUtils.classifyMeme(path);
-    		}
-    		myMemes.add(r);
-    	}
+    	List<TopMeme> results = getTopMemes(paths);
     	TopMemes top = new TopMemes();
-    	List<TopMeme> memes = new ArrayList<TopMeme>();
-    	int index = 1;
-		for (Result meme : myMemes) {
-			memes.add(new TopMeme(index, meme.getMeme(), meme.getCertainty(), 9001));
-			index++;
-		}
-    	top.setTopMemes(memes);
+    	top.setTopMemes(results);
         return new ResponseEntity<TopMemes>(top, HttpStatus.OK);
     }
-    
-    @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public ResponseEntity<String> getMemes() throws IOException, URISyntaxException {
-    	Indexer.index();
-    	RedditScraper scraper = new RedditScraper();
-    	List<String> paths = scraper.scrape();
-    	int downloads = 0;
-    	for (String path : paths) {
-    		try {
-    			ImageScrapeUtils.saveImage(path, "downloadedMemes/");
-    			downloads++;
-    		} catch (Exception e) {
-    			log.error("Error saving image: " + path, e);
+
+	private List<TopMeme> getTopMemes(List<String> paths) throws IOException, URISyntaxException {
+    	List<TopMeme> results = new ArrayList<TopMeme>();
+    	int index = 1;
+		for (String path : paths) {
+	    	boolean downloaded = false;
+    	    Result r = attemptToRetrieveFromCache(path);
+    		if (r == null) {
+    			r = ClassificationUtils.classifyMeme(path);
+    			if (r.getCertainty() < 0.5) {
+    				ImageScrapeUtils.saveImage(path, "/dowloaededMemes");
+    				downloaded = true;
+    			}
     		}
+    		results.add(new TopMeme(index, r.getMeme(), r.getCertainty(), 9001, downloaded));
+    		index++;
     	}
-        return new ResponseEntity<String>("Downloaded " + downloads + " images", 
-        		HttpStatus.OK);
-    }
+		return results;
+	}
 
-//    @RequestMapping(value = "/hairy", method = RequestMethod.POST)
-//    public ResponseEntity<String> someUpdate(String hairy) {
-//        return new ResponseEntity<String>("You typed: "+hairy, HttpStatus.OK);
-//    }
-//    
-//    @RequestMapping(value = "/hairy", method = RequestMethod.GET)
-//    public ResponseEntity<String> getHairy(UriComponentsBuilder builder) {
-//        return new ResponseEntity<String>("Hairy is gay", HttpStatus.NOT_ACCEPTABLE);
-//    }
-
+	private Result attemptToRetrieveFromCache(String path) {
+		Result r = null;
+		try {
+			r = MemeCache.getInstance().getCache().get(path);
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		return r;
+	}
 }
