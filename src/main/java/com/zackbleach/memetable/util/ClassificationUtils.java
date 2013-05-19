@@ -4,17 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.imagerecognition.Searcher;
-
+import static com.zackbleach.memetable.util.ImageScrapeUtils.getImageFromSite;
 public class ClassificationUtils {
-
-	public static BufferedImage getImageFromSite(String path) throws IOException, URISyntaxException {
-		MemeExtractor scraper = new MemeExtractor();
-		BufferedImage meme = scraper.extractMeme(path);
-		return meme;
-	}
 	
 	public static Result classifyMeme(String path) throws IOException, URISyntaxException {
 		Searcher searcher = new Searcher();

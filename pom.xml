@@ -148,7 +148,12 @@
 		<groupId>org.codehaus.jackson</groupId>
 		<artifactId>jackson-core-asl</artifactId>
 		<version>1.9.12</version>
-	</dependency>
+    </dependency>
+    <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>14.0.1</version>
+    </dependency>
 	</dependencies>
 	<build>
 		<plugins>

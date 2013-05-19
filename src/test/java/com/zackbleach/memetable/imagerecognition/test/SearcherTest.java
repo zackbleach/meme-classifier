@@ -1,7 +1,7 @@
 package com.zackbleach.memetable.imagerecognition.test;
 
 import static com.zackbleach.memetable.util.ClassificationUtils.classifyMeme;
-import static com.zackbleach.memetable.util.ClassificationUtils.getImageFromSite;
+import static com.zackbleach.memetable.util.ImageScrapeUtils.getImageFromSite;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

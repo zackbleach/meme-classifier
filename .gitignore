@@ -8,3 +8,8 @@ target/
 
 #OS X Stuff
 .DS_STORE
+
+src/main/resources/swagger.properties
+src/main/webapp/index.html
+
+
