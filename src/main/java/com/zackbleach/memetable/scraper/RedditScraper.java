@@ -30,7 +30,6 @@ public class RedditScraper {
 	private static final String ADVICE_ANIMALS = "http://www.reddit.com/r/adviceanimals.json";
 	
 	public RedditScraper() {
-		DOMConfigurator.configure("src/main/webapp/WEB-INF/log4j.xml");
 	}
 
 	public List<String> scrape() throws JsonParseException, JsonMappingException, IOException {

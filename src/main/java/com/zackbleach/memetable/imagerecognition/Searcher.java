@@ -44,7 +44,6 @@ public class Searcher {
 	private Map<String, String> memes;
 	
 	public Searcher() {
-		DOMConfigurator.configure("src/main/webapp/WEB-INF/log4j.xml");
 		memes = new HashMap<String, String>();
 		memes.put(Indexer.MEME_LOCATION+Indexer.INSANITY_WOLF_DIR, INSANITY_WOLF);
 		memes.put(Indexer.MEME_LOCATION+Indexer.PHILOSORAPTOR_DIR, PHILOSORAPTOR);
@@ -71,8 +70,10 @@ public class Searcher {
 		search(img);
 	}
 	
-	public Result getSimplifiedResult() {
+	public Result getTopResult(BufferedImage img) throws IOException {
+		search(img);
 		Result result = new Result();
+		result.setExtractedImage(img);
 		result.setCertainty(results.score(0));
 		log.info("Score = " + results.score(0));
 		if (results.score(0) < 0.2) {
