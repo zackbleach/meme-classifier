@@ -12,8 +12,7 @@ public class ClassificationUtils {
 	public static Result classifyMeme(String path) throws IOException, URISyntaxException {
 		Searcher searcher = new Searcher();
 		BufferedImage meme = getImageFromSite(path);
-		searcher.search(meme);
-		return searcher.getSimplifiedResult();
+		return searcher.getTopResult(meme);
 	}
 	
 	

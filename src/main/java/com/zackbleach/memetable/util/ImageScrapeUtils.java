@@ -41,7 +41,23 @@ public class ImageScrapeUtils {
 			log.warn("Problem saving image: " + path, urie);
 		}
 		return false;
-		
+	}
+	
+	public static boolean saveImage(BufferedImage image, String path,  String folder) {
+		try {
+			String[] parts = path.split("/");
+			File file = new File(folder+parts[parts.length - 1]);
+			if (!file.exists()) {
+				ImageIO.write(image, "jpg", file);
+				log.warn("Saved file to disk: " + file.getName());
+				return true;
+			} else {
+				return true;
+			}
+		} catch (IOException ioe) {
+			log.warn("Problem saving image: " + path, ioe);
+		}
+		return false;
 	}
 	
 	
