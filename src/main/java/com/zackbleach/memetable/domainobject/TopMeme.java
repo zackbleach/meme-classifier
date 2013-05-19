@@ -6,8 +6,9 @@ public class TopMeme {
 	private String name;
 	private float certainty;
 	private int instances;
+	private boolean downloaded;
 	
-	public TopMeme(int rank, String name, float certainty, int instances) {
+	public TopMeme(int rank, String name, float certainty, int instances, boolean downloaded) {
 		this.rank = rank;
 		this.name = name;
 		this.certainty = certainty;
@@ -35,8 +36,13 @@ public class TopMeme {
 	public float getCertainty() {
 		return certainty;
 	}
-
 	public void setCertainty(float certainty) {
 		this.certainty = certainty;
+	}
+	public boolean isDownloaded() {
+		return downloaded;
+	}
+	public void setDownloaded(boolean downloaded) {
+		this.downloaded = downloaded;
 	}
 }
