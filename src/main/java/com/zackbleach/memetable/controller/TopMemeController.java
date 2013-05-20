@@ -51,7 +51,8 @@ public class TopMemeController {
 	    	boolean downloaded = false;
     	    Result r = attemptToRetrieveFromCache(path);
     			if (r.getCertainty() < 0.5 && downloadUnknown ) {
-    					downloaded = ImageScrapeUtils.saveImage(path, "downloadedMemes/");
+    					downloaded = ImageScrapeUtils.saveImage(r.getExtractedImage(), path, 
+    							"downloadedMemes/");
     			}
     		results.add(new TopMeme(index, r.getMeme().identifier(), r.getCertainty(), 9001, downloaded));
     		index++;
