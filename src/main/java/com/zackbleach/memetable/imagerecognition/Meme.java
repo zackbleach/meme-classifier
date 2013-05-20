@@ -9,17 +9,42 @@ import org.apache.commons.lang.StringUtils;
 
 public enum Meme {
 	
-	INSANITY_WOLF("Insanity Wolf", "insanitywolf"),
-	PHILOSORAPTOR("Philosoraptor", "philosoraptor"),
-	INTERNET_WIFE("Internet Wife", "interwebwife"),
-	SCUMBAG_STEVE("Scumbag Steve", "scumbagsteve"),
-	FOUL_BACHELOR("Foul Bachelor", "foulbachelor"),
+	ADVICE_DOG("Advice Dog", "advicedog"),
 	ADVICE_MALLARD("Actual Advice Mallard", "advicemallard"),
-	SUCCESS_KID("Success Kid", "successkid"),
+	AM_I_THE_ONLY_ONE_AROUND_HERE("Am I The Only One Around Here", "amitheonlyonearoundhere"),
 	BAD_ADVICE_MALLARD("Bad Advice Mallard", "badadvicemallard"),
+	CATS("Cats", "cats"),
+	BAD_LUCK_BRIAN("Bad Luck Brian", "badluckbrian"),
+	BOLD_MOVE_COTTON("Bold Move Cotton", "boldmovecotton"),
+	BUSINESS_CAT("Business Cat", "businesscat"),
+	CANT_WAIT_TO_GET_HOME("I Can't Wait To Get Home", "cantwaittogethome"),
+	CONFESSION_BEAR("Confession Bear", "confessionbear"),
+	COURAGE_WOLF("Courage Wolf", "couragewolf"),
+	EMBARASSED_KID("Embarassed Kid", "embarassedkid"),
+	FOUL_BACHELOR("Foul Bachelor", "foulbachelor"),
+	FIRST_WORLD_PROBLEMS("First World Problems", "firstworldproblems"),
+	FUTURAMA_FRY("Futurama Fry", "futuramafry"),
+	GOOD_GIRL_GINA("Good Girl Gina", "goodgirlgina"),
 	GOOD_GUY_GREG("Good Guy Greg", "goodguygreg"),
-	CATS("Cats", "cats");
-
+	INTERNET_WIFE("Internet Wife", "interwebwife"),
+	INSANITY_WOLF("Insanity Wolf", "insanitywolf"),
+	JOKER("Joker", "joker"),
+	OVERLY_ATTACHED_GIRLFRIEND("Overly Attached Girlfriend", "overlyattachedgirlfriend"),
+	PEPPERIDGE_FARM("Pepperidge Farm Remembers", "pepperidgefarm"),
+	PICCARD("Piccard", "piccard"),
+	PHILOSORAPTOR("Philosoraptor", "philosoraptor"),
+	SCUMBAG_BRAIN("Scumbag Brain", "scumbagbrain"),
+	SCUMBAG_STACEY("Scumbag Stacey", "scumbagstacey"),
+	SCUMBAG_STEVE("Scumbag Steve", "scumbagsteve"),
+	SCUMBAG_TEACHER("Scumbag Teacher", "scumbagteacher"),
+	SOCIALLY_AWKWARD_PENGUIN("Socially Awkward Penguin", "sociallyawkwardpenguin"),
+	SOCIALL_AWKWARD_AWESOME_PENGUIN("Socially Awkward Awesome Penguin", "sociallyawkwardawesomepenguin"),
+	SPONGEBOB("Sponge Bob", "spongebob"),
+	SUCCESS_KID("Success Kid", "successkid"),
+	THATD_BE_GREAT("That'd be Great", "thatdbegreat"),
+	THE_MOST_INTERESTING_MAN_IN_THE_WORLD("The Most Interesting Man In The World", "themostinterestingmanintheworld"),
+	TODAY_WAS_A_GOOD_DAY("Today Was A Good Day", "todaywasagoodday");
+	
 	private final String identifier;
 	private final String directory;
 	
