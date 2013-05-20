@@ -30,7 +30,6 @@ public class MemeExtractor {
 	private static final String MEMECREATOR_PATTERN = "div.left img";
 
 	public MemeExtractor() {
-		DOMConfigurator.configure("src/main/webapp/WEB-INF/log4j.xml");
 	}
 
 	public BufferedImage extractMeme(String path) throws IOException, URISyntaxException {

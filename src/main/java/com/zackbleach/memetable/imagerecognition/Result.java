@@ -4,14 +4,14 @@ import java.awt.image.BufferedImage;
 
 public class Result {
 
-	private String meme;
+	private Meme meme;
 	private float certainty;
 	private BufferedImage extractedImage;
 	
-	public String getMeme() {
+	public Meme getMeme() {
 		return meme;
 	}
-	public void setMeme(String meme) {
+	public void setMeme(Meme meme) {
 		this.meme = meme;
 	}
 	public float getCertainty() {
