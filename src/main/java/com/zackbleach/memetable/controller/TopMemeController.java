@@ -21,6 +21,7 @@ import com.zackbleach.memetable.domainobject.TopMeme;
 import com.zackbleach.memetable.domainobject.TopMemes;
 import com.zackbleach.memetable.imagerecognition.Indexer;
 import com.zackbleach.memetable.imagerecognition.Result;
+import com.zackbleach.memetable.scraper.Post;
 import com.zackbleach.memetable.scraper.RedditScraper;
 import com.zackbleach.memetable.util.ClassificationUtils;
 import com.zackbleach.memetable.util.ImageScrapeUtils;
@@ -37,24 +38,32 @@ public class TopMemeController {
     	//Could use response body here as well
     	Indexer.index();
     	RedditScraper scraper = new RedditScraper();
-    	List<String> paths = scraper.scrape();
-    	List<TopMeme> results = getTopMemes(paths, downloadUnknown);
+    	List<Post> posts = scraper.scrape();
+    	List<TopMeme> results = getTopMemes(posts, downloadUnknown);
     	TopMemes top = new TopMemes();
     	top.setTopMemes(results);
         return new ResponseEntity<TopMemes>(top, HttpStatus.OK);
     }
 
-	private List<TopMeme> getTopMemes(List<String> paths, boolean downloadUnknown) {
+	private List<String> getPaths(List<Post> posts) {
+		List<String> paths = new ArrayList<String>();
+    		for (Post post : posts) {
+    			paths.add(post.getImageUrl());
+    		}
+		return paths;
+	}
+
+	private List<TopMeme> getTopMemes(List<Post> posts, boolean downloadUnknown) {
     	List<TopMeme> results = new ArrayList<TopMeme>();
     	int index = 1;
-		for (String path : paths) {
+		for (Post post : posts) {
 	    	boolean downloaded = false;
-    	    Result r = attemptToRetrieveFromCache(path);
+    	    Result r = attemptToRetrieveFromCache(post.getImageUrl());
     			if (r.getCertainty() < 0.5 && downloadUnknown ) {
-    					downloaded = ImageScrapeUtils.saveImage(r.getExtractedImage(), path, 
+    					downloaded = ImageScrapeUtils.saveImage(r.getExtractedImage(), post.getImageUrl(), 
     							"downloadedMemes/");
     			}
-    		results.add(new TopMeme(index, r.getMeme().identifier(), r.getCertainty(), 9001, downloaded));
+    		results.add(new TopMeme(index, r.getMeme().identifier(), r.getCertainty(), post.getScore(), downloaded));
     		index++;
     	}
 		return results;

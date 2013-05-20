@@ -5,14 +5,14 @@ public class TopMeme {
 	private int rank;
 	private String name;
 	private float certainty;
-	private int instances;
+	private int score;
 	private boolean downloaded;
 	
 	public TopMeme(int rank, String name, float certainty, int instances, boolean downloaded) {
 		this.rank = rank;
 		this.name = name;
 		this.certainty = certainty;
-		this.instances = instances;
+		this.score = instances;
 		this.downloaded = downloaded;
 	}
 	
@@ -28,11 +28,11 @@ public class TopMeme {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getInstances() {
-		return instances;
+	public int getScore() {
+		return score;
 	}
-	public void setInstances(int instances) {
-		this.instances = instances;
+	public void setScore(int score) {
+		this.score = score;
 	}
 	public float getCertainty() {
 		return certainty;
