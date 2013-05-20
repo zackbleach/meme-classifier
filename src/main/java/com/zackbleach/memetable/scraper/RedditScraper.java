@@ -32,20 +32,21 @@ public class RedditScraper {
 	public RedditScraper() {
 	}
 
-	public List<String> scrape() throws JsonParseException, JsonMappingException, IOException {
+	public List<Post> scrape() throws JsonParseException, JsonMappingException, IOException {
            String json = getPage();
            ObjectMapper mapper = new ObjectMapper();
            JsonNode rootNode = mapper.readValue(json, JsonNode.class);
            JsonNode data = rootNode.get("data");
            JsonNode children = data.get("children");
-           List<String> memeUrls = new ArrayList<String>();
+           List<Post> posts = new ArrayList<Post>();
            for (JsonNode n : children) {
         	   JsonNode submission = n.get("data");
         	   String url = submission.get("url").asText();
-        	   memeUrls.add(url);
+        	   int score = submission.get("score").asInt();
+        	   posts.add(new Post(url, score));
         	   log.info("Found URL: "+url);
            }
-           return memeUrls;
+           return posts;
    }
    
    private String getPage() throws IOException {
