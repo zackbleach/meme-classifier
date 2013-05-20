@@ -15,7 +15,7 @@ public class MemeCache {
 	
 	private MemeCache() {
 		cache = CacheBuilder.newBuilder()
-			       .maximumSize(1000)
+			       .maximumSize(50)
 			       .build(
 			           new CacheLoader<String, Result>() {
 			             public Result load(String key) throws IOException, URISyntaxException {
