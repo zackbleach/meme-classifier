@@ -53,7 +53,7 @@ public class TopMemeController {
     			if (r.getCertainty() < 0.5 && downloadUnknown ) {
     					downloaded = ImageScrapeUtils.saveImage(path, "downloadedMemes/");
     			}
-    		results.add(new TopMeme(index, r.getMeme(), r.getCertainty(), 9001, downloaded));
+    		results.add(new TopMeme(index, r.getMeme().identifier(), r.getCertainty(), 9001, downloaded));
     		index++;
     	}
 		return results;
