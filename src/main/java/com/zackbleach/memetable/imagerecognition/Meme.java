@@ -22,6 +22,7 @@ public enum Meme {
 	BOLD_MOVE_COTTON("Bold Move Cotton", "boldmovecotton"),
 	BUSINESS_CAT("Business Cat", "businesscat"),
 	CANT_WAIT_TO_GET_HOME("I Can't Wait To Get Home", "cantwaittogethome"),
+	CLARITY_CLARENCE("Sudden Clarity Clarence", "clarityclarence"),
 	CONFESSION_BEAR("Confession Bear", "confessionbear"),
 	COURAGE_WOLF("Courage Wolf", "couragewolf"),
 	EMBARASSED_KID("Embarassed Kid", "embarassedkid"),
