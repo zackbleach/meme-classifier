@@ -9,11 +9,15 @@ import org.apache.commons.lang.StringUtils;
 
 public enum Meme {
 	
+	AND_ITS_GONE("South Park: aaaaaand", "aaand"),
 	ADVICE_DOG("Advice Dog", "advicedog"),
 	ADVICE_MALLARD("Actual Advice Mallard", "advicemallard"),
 	AM_I_THE_ONLY_ONE_AROUND_HERE("Am I The Only One Around Here", "amitheonlyonearoundhere"),
 	BAD_ADVICE_MALLARD("Bad Advice Mallard", "badadvicemallard"),
+	BRACE_YOURSELVES("Brace Yourselves", "braceyourselves"),
 	CATS("Cats", "cats"),
+	CAPTAIN_HINDSIGHT("Captain Hindsight", "captainhindsight"),
+	COLLEGE_HIPPY("College Hippy", "collegehippy"),
 	BAD_LUCK_BRIAN("Bad Luck Brian", "badluckbrian"),
 	BOLD_MOVE_COTTON("Bold Move Cotton", "boldmovecotton"),
 	BUSINESS_CAT("Business Cat", "businesscat"),
@@ -26,8 +30,11 @@ public enum Meme {
 	FUTURAMA_FRY("Futurama Fry", "futuramafry"),
 	GOOD_GIRL_GINA("Good Girl Gina", "goodgirlgina"),
 	GOOD_GUY_GREG("Good Guy Greg", "goodguygreg"),
+	GOOD_GUY_OBAMA("Good Guy Obama", "goodguyobama"),
 	INTERNET_WIFE("Internet Wife", "interwebwife"),
 	INSANITY_WOLF("Insanity Wolf", "insanitywolf"),
+	I_SHOULD_BUY_A_BOAT("I Should Buy a Boat Cat", "ishouldbuyaboat"),
+	I_WOULD_BE_SO_HAPPY("South Park: I woul dbe so happy", "iwouldbesohappy"),
 	JOKER("Joker", "joker"),
 	OVERLY_ATTACHED_GIRLFRIEND("Overly Attached Girlfriend", "overlyattachedgirlfriend"),
 	PEPPERIDGE_FARM("Pepperidge Farm Remembers", "pepperidgefarm"),
@@ -42,8 +49,10 @@ public enum Meme {
 	SPONGEBOB("Sponge Bob", "spongebob"),
 	SUCCESS_KID("Success Kid", "successkid"),
 	THATD_BE_GREAT("That'd be Great", "thatdbegreat"),
+	TEN_GUY("Ten Guy", "10guy"),
 	THE_MOST_INTERESTING_MAN_IN_THE_WORLD("The Most Interesting Man In The World", "themostinterestingmanintheworld"),
-	TODAY_WAS_A_GOOD_DAY("Today Was A Good Day", "todaywasagoodday");
+	TODAY_WAS_A_GOOD_DAY("Today Was A Good Day", "todaywasagoodday"),
+	WHAT_IF_I_TOLD_YOU("What If I Told You", "whatifitoldyou");
 	
 	private final String identifier;
 	private final String directory;
