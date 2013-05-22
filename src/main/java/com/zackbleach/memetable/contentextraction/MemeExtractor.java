@@ -3,6 +3,8 @@ package com.zackbleach.memetable.contentextraction;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -32,7 +34,8 @@ public class MemeExtractor {
 	public MemeExtractor() {
 	}
 
-	public BufferedImage extractMeme(String path) throws IOException, URISyntaxException {
+	public BufferedImage extractMeme(String path) throws IOException,
+			URISyntaxException {
 		validateUrl(path);
 		log.info("Beginning meme extraction from: " + path);
 		boolean isImage = false;

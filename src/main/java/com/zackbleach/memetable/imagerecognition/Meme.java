@@ -1,5 +1,6 @@
 package com.zackbleach.memetable.imagerecognition;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,15 +86,15 @@ public enum Meme {
 	 * Determines the Meme from the path to the file
 	 */
 	public static Meme typeByPath(String path) {
-		String[] parts = path.split("/");
-		String newPath = StringUtils.join(Arrays.copyOfRange(parts, 0, parts.length-1), "/");
 		
-		Meme meme = identifierToMeme.get(newPath);
-		if (meme != null) {
-			return meme;
+		File file = new File(path);
+		String parentDir = file.getParent();
+		
+		Meme meme = identifierToMeme.get(parentDir);
+		if (meme == null) {
+			throw new IllegalArgumentException("Could not determine Meme type from path: " + path);
 		}
-		
-		throw new IllegalArgumentException("Could not determine Meme type from path: " + path);
+		return meme;
 	}
 	
 }
