@@ -44,6 +44,9 @@ public class ImageScrapeUtils {
 	}
 	
 	public static boolean saveImage(BufferedImage image, String path,  String folder) {
+		if (image == null) {
+			return false;
+		}
 		try {
 			String[] parts = path.split("/");
 			File file = new File(folder+parts[parts.length - 1]);
