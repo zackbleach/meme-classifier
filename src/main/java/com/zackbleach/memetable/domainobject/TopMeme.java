@@ -6,14 +6,15 @@ public class TopMeme implements Comparable<TopMeme>{
 	private float certainty;
 	private int score;
 	private boolean downloaded;
+	private int rank;
 	
-	public TopMeme(String name, float certainty, int instances, boolean downloaded) {
+	public TopMeme(String name, float certainty, int instances, boolean downloaded, int rank) {
 		this.name = name;
 		this.certainty = certainty;
 		this.score = instances;
 		this.downloaded = downloaded;
+		this.rank = rank;
 	}
-	
 
 	public String getName() {
 		return name;
@@ -38,6 +39,12 @@ public class TopMeme implements Comparable<TopMeme>{
 	}
 	public void setDownloaded(boolean downloaded) {
 		this.downloaded = downloaded;
+	}
+	public int getRank() {
+		return rank;
+	}
+	public void setRank(int rank) {
+		this.rank = rank;
 	}
 
 	@Override
