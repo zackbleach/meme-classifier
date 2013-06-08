@@ -1,6 +1,6 @@
 package com.zackbleach.memetable.contentextraction.test;
 
-import static com.zackbleach.memetable.util.ImageUtils.getImageFromSite;
+import static com.zackbleach.memetable.util.ImageScrapeUtils.getImageFromSite;
 
 import java.awt.Image;
 import java.io.IOException;
@@ -8,16 +8,12 @@ import java.net.URISyntaxException;
 
 import junit.framework.Assert;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.zackbleach.memetable.contentextraction.MemeExtractor;
-import com.zackbleach.memetable.controller.TopMemeController;
 import com.zackbleach.memetable.util.ImageViewer;
 
 public class ImageExtractionTest {
-	//TODO: save these HTML files locally, then we're never checking the internet connection
-    private static final Logger log = Logger.getLogger(ImageExtractionTest.class);
 	
 	final static String IMAGE = "http://resme.me/3ucjh8.jpg";
 	final static String QUICKMEME = "http://www.quickmeme.com/meme/3uazvf/#by=ad";

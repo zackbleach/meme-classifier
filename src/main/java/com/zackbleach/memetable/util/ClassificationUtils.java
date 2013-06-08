@@ -3,16 +3,12 @@ package com.zackbleach.memetable.util;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.log4j.Logger;
 
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-
-import com.google.common.collect.ImmutableList;
 import com.zackbleach.memetable.cache.MemeCache;
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
+import com.zackbleach.memetable.clustering.CEDD;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.imagerecognition.Searcher;
 import static com.zackbleach.memetable.util.ImageUtils.getImageFromSite;

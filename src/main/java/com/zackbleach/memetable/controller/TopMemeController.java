@@ -24,7 +24,6 @@ import com.zackbleach.memetable.imagerecognition.Indexer;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.scraper.Post;
 import com.zackbleach.memetable.scraper.RedditScraper;
-import com.zackbleach.memetable.util.ClassificationUtils;
 import com.zackbleach.memetable.util.ImageUtils;
 
 @Controller
@@ -64,10 +63,10 @@ public class TopMemeController {
     
     private List<TopMeme> getTopMemesList(List<Post> posts, boolean downloadUnknown) {
         List<TopMeme> results = new ArrayList<TopMeme>();
-        int rank = 1;
+        int index = 0;
         for (Post post : posts) {
             boolean downloaded = false;
-            Result r = ClassificationUtils.classify(post.getImageUrl());
+            Result r = attemptToRetrieveFromCache(post.getImageUrl());
             if (null != r) {
                 if (r.getCertainty() < 0.5 && downloadUnknown) {
                     downloaded = ImageUtils.saveImage(
@@ -75,9 +74,9 @@ public class TopMemeController {
                             "downloadedMemes/");
                 }
                 results.add(new TopMeme(r.getMeme().identifier(), r
-                        .getCertainty(), post.getScore(), downloaded, rank));
+                        .getCertainty(), post.getScore(), downloaded, index));
             }
-            rank++;
+            index++;
         }
         return results;
     }
@@ -97,12 +96,22 @@ public class TopMemeController {
             meme.add(m);
         }
         Collections.sort(meme);
-        int rank = 1;
+        int index = 0;
         for (TopMeme m : meme) {
-        	m.setRank(rank);
-        	rank++;
+        	m.setRank(index);
+        	index++;
         }
         return meme;
+    }
+
+    private Result attemptToRetrieveFromCache(String path) {
+        Result r = null;
+        try {
+            r = MemeCache.getInstance().getCache().get(path);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return r;
     }
 
     /**

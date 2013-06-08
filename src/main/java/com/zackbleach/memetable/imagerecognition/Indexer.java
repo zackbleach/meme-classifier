@@ -22,8 +22,8 @@ import net.semanticmetadata.lire.utils.LuceneUtils;
 
 public class Indexer {
 		
-	public static final String INDEX_PATH = "index/";
-	public static final String MEME_LOCATION = "/Users/zackbleach/Documents/Spring/Memes/";
+	public static final String INDEX_PATH = "src/main/resources/index/";
+	public static final String MEME_LOCATION = "/Users/zackbleach/Documents/Spring/src/main/resources/Memes/";
 	
     public static void index() throws IOException {
     	
@@ -40,7 +40,7 @@ public class Indexer {
         }
         if (!passed) {
             throw new IOException("Directory not found");
-        }	
+        }
         // Getting all images from a directory and its sub directories.
         ArrayList<String> images = FileUtils.getAllImages(new File(MEME_LOCATION), true);
  

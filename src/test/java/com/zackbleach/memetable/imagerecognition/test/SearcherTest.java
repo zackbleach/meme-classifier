@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import com.zackbleach.memetable.contentextraction.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Meme;
-import com.zackbleach.memetable.imagerecognition.Searcher;
 import com.zackbleach.memetable.util.ImageViewer;
 
 public class SearcherTest {
