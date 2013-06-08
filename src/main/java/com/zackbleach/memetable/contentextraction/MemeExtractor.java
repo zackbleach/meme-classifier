@@ -2,6 +2,7 @@ package com.zackbleach.memetable.contentextraction;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -17,19 +18,24 @@ import javax.swing.ImageIcon;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class MemeExtractor {
+	
+	//TODO: Take out references to ImageIcon?
+	//TODO: Get more clues (Title DIV on QuickMeme?)
+	//TODO: Extraction patterns should be in an Enum?
 
 	private static final Logger log = Logger.getLogger(MemeExtractor.class);
 
-	private static final String QUICKMEME_PATTERN = "img[id$=img]";
-	private static final String IMGUR_PATTERN = "div.image img";
-	private static final String LIVEMEME_PATTERN = "img[id$=memeImage]";
-	private static final String MEMECREATOR_PATTERN = "div.left img";
+	private static final String QUICKMEME_MEME_PATTERN = "img[id$=img]";
+	private static final String IMGUR_MEME_PATTERN = "div.image img";
+	private static final String LIVEMEME_MEME_PATTERN = "img[id$=memeImage]";
+	private static final String MEMECREATOR_MEME_PATTERN = "div.left img";
 
 	public MemeExtractor() {
 	}
@@ -38,13 +44,7 @@ public class MemeExtractor {
 			URISyntaxException {
 		validateUrl(path);
 		log.info("Beginning meme extraction from: " + path);
-		boolean isImage = false;
-		for (String s : ImageIO.getReaderFormatNames()) {
-			if (path.endsWith(s)) {
-				isImage = true;
-				break;
-			}
-		}
+		boolean isImage = isImage(path);
 		BufferedImage image = null;
 		if (isImage) {
 			log.info("Found path to image");
@@ -62,13 +62,13 @@ public class MemeExtractor {
 		String domain = getDomainName(path);
 		BufferedImage meme = null;
 		if (domain.equals("quickmeme") || domain.equals("qkme")) {
-			meme = extractFromKnownSite(path, QUICKMEME_PATTERN);
+			meme = extractFromKnownSite(path, QUICKMEME_MEME_PATTERN);
 		} else if (domain.equals("imgur")) {
-			meme = extractFromKnownSite(path, IMGUR_PATTERN);
+			meme = extractFromKnownSite(path, IMGUR_MEME_PATTERN);
 		} else if (domain.equals("livememe")) {
-			meme = extractFromKnownSite(path, LIVEMEME_PATTERN);
+			meme = extractFromKnownSite(path, LIVEMEME_MEME_PATTERN);
 		} else if (domain.equals("memecreator")) {
-			meme = extractFromKnownSite(path, MEMECREATOR_PATTERN);
+			meme = extractFromKnownSite(path, MEMECREATOR_MEME_PATTERN);
 		} else {
 			meme = extractFromUnknownSite(path);
 		}
@@ -76,7 +76,7 @@ public class MemeExtractor {
 	}
 
 	private BufferedImage extractFromKnownSite(String path, String pattern) throws IOException {
-		Document doc = Jsoup.connect(path).get();
+		Document doc = Jsoup.connect(path).execute().parse();
 		Element image = doc.select(pattern).first();
 		String url = image.absUrl("src");
 		log.info("Downloading image: " + url);
@@ -91,7 +91,7 @@ public class MemeExtractor {
 	private BufferedImage extractFromUnknownSite(String path) throws IOException {
 		Document doc = null;
 		try {
-			doc = Jsoup.connect(path).get();
+			doc = Jsoup.connect(path).execute().parse();
 		} catch (UnsupportedMimeTypeException e) {
 			return downloadImage(path);
 		}
@@ -154,5 +154,39 @@ public class MemeExtractor {
 		}
 		return (BufferedImage) images.get(largestImageIndex).getImage();
 	}
+	
+	private String getContentType(String path) throws IOException{
+		URL url = new URL(path);
+		HttpURLConnection connection = (HttpURLConnection)  url.openConnection();
+		connection.setRequestMethod("HEAD");
+		connection.connect();
+		return connection.getContentType();
+		
+	}
+	
+	private boolean isImage(String path) {
+	    return isImageFromContentTypeHeader(path) 
+	    		|| isImageFromExtension(path);
+	}
 
+	private boolean isImageFromExtension(String path) {
+		for (String s : ImageIO.getReaderFormatNames()) {
+			if (path.endsWith(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isImageFromContentTypeHeader(String path) {
+		try {
+			String contentType = getContentType(path);
+			if (contentType.toLowerCase().contains("image")) {
+				return true;
+			}
+		} catch (IOException e) {
+			log.error("Failed to retrieve content type for URL: " + path);
+		}
+		return false;
+	}
 }

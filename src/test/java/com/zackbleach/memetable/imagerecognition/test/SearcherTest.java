@@ -1,7 +1,7 @@
 package com.zackbleach.memetable.imagerecognition.test;
 
-import static com.zackbleach.memetable.util.ClassificationUtils.classifyMeme;
-import static com.zackbleach.memetable.util.ImageScrapeUtils.getImageFromSite;
+import static com.zackbleach.memetable.util.ClassificationUtils.classifyMemeFromPath;
+import static com.zackbleach.memetable.util.ImageUtils.getImageFromSite;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -24,17 +24,17 @@ public class SearcherTest {
 	
 	@Test
 	public void accuracyPhilosoraptor() throws IOException, URISyntaxException {
-		Assert.assertTrue(classifyMeme(PHILOSORAPTOR_IMAGE).getMeme() == Meme.PHILOSORAPTOR);
+		Assert.assertTrue(classifyMemeFromPath(PHILOSORAPTOR_IMAGE).getMeme() == Meme.PHILOSORAPTOR);
 	}
 	
 	@Test
 	public void accuracyInternetWife() throws IOException, URISyntaxException {
-		Assert.assertTrue(classifyMeme(INTERNET_WIFE_IMAGE).getMeme() == Meme.INTERNET_WIFE);
+		Assert.assertTrue(classifyMemeFromPath(INTERNET_WIFE_IMAGE).getMeme() == Meme.INTERNET_WIFE);
 	}
 	
 	@Test
 	public void accuracyInsanityWolf() throws IOException, URISyntaxException {
-		Assert.assertTrue(classifyMeme(INSANITY_WOLF_IMAGE).getMeme() == Meme.INSANITY_WOLF);
+		Assert.assertTrue(classifyMemeFromPath(INSANITY_WOLF_IMAGE).getMeme() == Meme.INSANITY_WOLF);
 	}
 
 	public static void main(String[] args) throws IOException, URISyntaxException {

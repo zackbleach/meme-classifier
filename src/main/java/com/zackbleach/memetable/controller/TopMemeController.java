@@ -24,7 +24,8 @@ import com.zackbleach.memetable.imagerecognition.Indexer;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.scraper.Post;
 import com.zackbleach.memetable.scraper.RedditScraper;
-import com.zackbleach.memetable.util.ImageScrapeUtils;
+import com.zackbleach.memetable.util.ClassificationUtils;
+import com.zackbleach.memetable.util.ImageUtils;
 
 @Controller
 @RequestMapping("api/memes")
@@ -63,20 +64,20 @@ public class TopMemeController {
     
     private List<TopMeme> getTopMemesList(List<Post> posts, boolean downloadUnknown) {
         List<TopMeme> results = new ArrayList<TopMeme>();
-        int index = 0;
+        int rank = 1;
         for (Post post : posts) {
             boolean downloaded = false;
-            Result r = attemptToRetrieveFromCache(post.getImageUrl());
+            Result r = ClassificationUtils.classify(post.getImageUrl());
             if (null != r) {
                 if (r.getCertainty() < 0.5 && downloadUnknown) {
-                    downloaded = ImageScrapeUtils.saveImage(
+                    downloaded = ImageUtils.saveImage(
                             r.getExtractedImage(), post.getImageUrl(),
                             "downloadedMemes/");
                 }
                 results.add(new TopMeme(r.getMeme().identifier(), r
-                        .getCertainty(), post.getScore(), downloaded, index));
+                        .getCertainty(), post.getScore(), downloaded, rank));
             }
-            index++;
+            rank++;
         }
         return results;
     }
@@ -96,22 +97,12 @@ public class TopMemeController {
             meme.add(m);
         }
         Collections.sort(meme);
-        int index = 0;
+        int rank = 1;
         for (TopMeme m : meme) {
-        	m.setRank(index);
-        	index++;
+        	m.setRank(rank);
+        	rank++;
         }
         return meme;
-    }
-
-    private Result attemptToRetrieveFromCache(String path) {
-        Result r = null;
-        try {
-            r = MemeCache.getInstance().getCache().get(path);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return r;
     }
 
     /**

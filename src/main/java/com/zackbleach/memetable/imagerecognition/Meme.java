@@ -51,27 +51,34 @@ public enum Meme {
 	SPONGEBOB("Sponge Bob", "spongebob"),
 	SUCCESS_KID("Success Kid", "successkid"),
 	THATD_BE_GREAT("That'd be Great", "thatdbegreat"),
+	TECH_IMPARIED_DUCK("Tech Impaired Duck", "techimpairedduck"),
 	TEN_GUY("Ten Guy", "10guy"),
 	THE_MOST_INTERESTING_MAN_IN_THE_WORLD("The Most Interesting Man In The World", "themostinterestingmanintheworld"),
 	TODAY_WAS_A_GOOD_DAY("Today Was A Good Day", "todaywasagoodday"),
 	WHAT_IF_I_TOLD_YOU("What If I Told You", "whatifitoldyou");
 	
 	private final String identifier;
+	private final String absoluteDirectory;
 	private final String directory;
 	
+	public String getDirectory() {
+		return directory;
+	}
+
 	private static final Map<String, Meme> identifierToMeme;
 
 	  static {
 	    Map<String, Meme> build = new HashMap<String, Meme>();
 	    for (Meme meme : Meme.values()) {
-	      build.put(meme.directory, meme);
+	      build.put(meme.absoluteDirectory, meme);
 	    }
 	    identifierToMeme = Collections.unmodifiableMap(build);
 	  }
 	
 	private Meme(String identifier, String directory) {
 		this.identifier = identifier;
-		this.directory = Indexer.MEME_LOCATION + directory;
+		this.absoluteDirectory = Indexer.MEME_LOCATION + directory;
+		this.directory = directory;
 	}
 
 	public String identifier() {
@@ -79,7 +86,7 @@ public enum Meme {
 	}
 
 	public String directory() {
-		return directory;
+		return absoluteDirectory;
 	}
 	
 	/**

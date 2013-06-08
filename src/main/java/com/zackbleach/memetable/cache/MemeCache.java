@@ -20,7 +20,7 @@ public class MemeCache {
                    .build(
                        new CacheLoader<String, Result>() {
                          public Result load(String key) throws IOException, URISyntaxException {
-                           return ClassificationUtils.classifyMeme(key);
+                           return ClassificationUtils.classifyMemeFromPath(key);
                          }
                        });
     }
