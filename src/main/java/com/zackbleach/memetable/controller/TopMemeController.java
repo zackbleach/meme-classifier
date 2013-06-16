@@ -73,7 +73,7 @@ public class TopMemeController {
                             r.getExtractedImage(), post.getImageUrl(),
                             "downloadedMemes/");
                 }
-                results.add(new TopMeme(r.getMeme().identifier(), r
+                results.add(new TopMeme(r.getMeme().getIdentifier(), r
                         .getCertainty(), post.getScore(), downloaded, index));
             }
             index++;

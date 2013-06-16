@@ -2,11 +2,15 @@ package com.zackbleach.memetable.clustering.test;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.zackbleach.memetable.clustering.CEDD;
+import com.zackbleach.memetable.clustering.Clusterer;
 import com.zackbleach.memetable.imagerecognition.Meme;
 import com.zackbleach.memetable.util.ImageUtils;
 
@@ -15,6 +19,11 @@ public class LireTest {
 	public static final String TEST_FOLDER_PATH = "TestMemes/";
 	
 	@Test
+	public void clusterTest() throws JsonParseException, JsonMappingException, IOException, URISyntaxException {
+		Clusterer c = new Clusterer();
+		c.cluster();
+	}
+	
 	public void lireTest() throws IOException {
 		
 		List<BufferedImage> adviceMallards = 
@@ -55,7 +64,6 @@ public class LireTest {
 		System.out.println("Av duck distance:" + avDuck.getDistance(wolf));
 		System.out.println("Av duck distance from duck1: " + avDuck.getDistance(duck));
 		System.out.println("Av duck distance from duck2: " + avDuck.getDistance(duck2));
-		
 	
 	}
 }

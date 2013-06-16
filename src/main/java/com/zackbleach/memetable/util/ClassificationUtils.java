@@ -12,6 +12,7 @@ import com.zackbleach.memetable.clustering.CEDD;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.imagerecognition.Searcher;
 import static com.zackbleach.memetable.util.ImageUtils.getImageFromSite;
+
 public class ClassificationUtils {
 	
 	private static final Logger log = Logger.getLogger(ClassificationUtils.class);

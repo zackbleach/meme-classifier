@@ -58,30 +58,36 @@ public enum Meme {
 	
 	private final String identifier;
 	private final String directory;
+	private final String absPath;
 	
 	private static final Map<String, Meme> identifierToMeme;
 
 	  static {
 	    Map<String, Meme> build = new HashMap<String, Meme>();
 	    for (Meme meme : Meme.values()) {
-	      build.put(meme.directory, meme);
+	      build.put(meme.getAbsPath(), meme);
 	    }
 	    identifierToMeme = Collections.unmodifiableMap(build);
 	  }
 	
 	private Meme(String identifier, String directory) {
 		this.identifier = identifier;
-		this.directory = Indexer.MEME_LOCATION + directory;
+		this.absPath = Indexer.MEME_LOCATION + directory;
+		this.directory = directory;
 	}
 
-	public String identifier() {
+	public String getIdentifier() {
 		return identifier;
 	}
 
-	public String directory() {
+	public String getDirectory() {
 		return directory;
 	}
 	
+	public String getAbsPath() {
+		return absPath;
+	}
+
 	/**
 	 * Determines the Meme from the path to the file
 	 */

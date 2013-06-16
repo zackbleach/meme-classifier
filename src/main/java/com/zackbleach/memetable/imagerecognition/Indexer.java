@@ -22,8 +22,8 @@ import net.semanticmetadata.lire.utils.LuceneUtils;
 
 public class Indexer {
 		
-	public static final String INDEX_PATH = "src/main/resources/index/";
-	public static final String MEME_LOCATION = "/Users/zackbleach/Documents/Spring/src/main/resources/Memes/";
+	public static final String INDEX_PATH = "index/";
+	public static final String MEME_LOCATION = "/Users/zackbleach/Documents/Spring/Memes/";
 	
     public static void index() throws IOException {
     	
@@ -31,7 +31,6 @@ public class Indexer {
     		System.out.println("Index alredy exists");
     		return;
     	}
-
     	boolean passed = false;
         if (MEME_LOCATION != null) {
             File f = new File(MEME_LOCATION);
@@ -47,8 +46,6 @@ public class Indexer {
         // Use multiple DocumentBuilder instances:
         ChainedDocumentBuilder builder = new ChainedDocumentBuilder();
         builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
  
         // Creating an Lucene IndexWriter
         IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION,

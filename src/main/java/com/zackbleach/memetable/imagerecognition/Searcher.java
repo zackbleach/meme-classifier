@@ -60,7 +60,7 @@ public class Searcher {
 		}
 		String closestFilePath = results.doc(0).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
 		Meme meme = Meme.typeByPath(closestFilePath);
-		log.info("Found instance of: " + meme.identifier());
+		log.info("Found instance of: " + meme.getIdentifier());
 		result.setMeme(meme);
 		return result;
 	}
