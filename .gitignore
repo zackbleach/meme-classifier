@@ -12,4 +12,6 @@ target/
 src/main/resources/swagger.properties
 src/main/webapp/index.html
 
-
+Memes/
+TestMemes/
+index/
