@@ -8,7 +8,6 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -23,18 +22,14 @@ public class Clusterer {
 	public final static String IMAGE_PATH = "TestMemes/";
 	
 	public void cluster() throws JsonParseException, JsonMappingException, IOException, URISyntaxException {
-		List<Cluster> clusters = createInitialClusters();
+		List<Cluster> clusters = createInitialClusters(OpponentHistogram.class);
 		Set<ClusterPair> pairings = getPairings(clusters);
 		HierarchyBuilder h = new HierarchyBuilder(clusters, pairings);
 		Cluster c = h.buildHeirarchy();
-		System.out.println("================================================================================");
 		printHeirarchy(c);
 	}
 	
 	public void printHeirarchy(Cluster root) {
-		//add cur node to stack
-		//if cur node has children
-		//add both children to the stack 
 		Deque<Cluster> q = new LinkedList<Cluster>();
 		if (root == null) {
 			return;
@@ -52,22 +47,34 @@ public class Clusterer {
 
 	public List<BufferedImage> getImages() throws JsonParseException, JsonMappingException, IOException {
 		List<BufferedImage> results = new ArrayList<BufferedImage>();
-		results.addAll(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.ADVICE_MALLARD.getDirectory()));
-		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.BAD_ADVICE_MALLARD.getDirectory()).get(1));
 		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.GOOD_GUY_GREG.getDirectory()).get(0));
 		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.GOOD_GUY_GREG.getDirectory()).get(1));
+		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.BUSINESS_CAT.getDirectory()).get(0));
+		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.BUSINESS_CAT.getDirectory()).get(1));
+		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.ADVICE_MALLARD.getDirectory()).get(0));
+		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.ADVICE_MALLARD.getDirectory()).get(1));
+		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.BAD_ADVICE_MALLARD.getDirectory()).get(0));
+		results.add(ImageUtils.readImagesFromFolder(IMAGE_PATH+Meme.BAD_ADVICE_MALLARD.getDirectory()).get(1));
 		return results;
 	}
 	
-	public List<Cluster> createInitialClusters() throws JsonParseException, JsonMappingException, IOException, URISyntaxException {
+	public List<Cluster> createInitialClusters(Class<? extends MemeFeature> memeFeatureClass)
+			throws JsonParseException, JsonMappingException, IOException, URISyntaxException {
 		List<BufferedImage> images = getImages();
 		List<Cluster> clusters = new ArrayList<Cluster>();
 		for (BufferedImage image : images) {
+			MemeFeature cedd;
 			Result classification = ClassificationUtils.classifyMemeFromImage(image);
 			Cluster cluster = new Cluster();
-			CEDD cedd = new CEDD();
+			try {
+				cedd = memeFeatureClass.newInstance();
+			} catch (InstantiationException e) {
+				cedd = new OpponentHistogram();
+			} catch (IllegalAccessException e) {
+				cedd = new OpponentHistogram();
+			}
 			cedd.extract(image);
-			cluster.setCedd(cedd);
+			cluster.setFeature(cedd);
 			clusters.add(cluster);
 			cluster.setName(classification.getMeme().getIdentifier());
 		}
@@ -80,7 +87,7 @@ public class Clusterer {
 			Cluster cluster = clusters.get(i);
 			for (int j = i; j < clusters.size(); j ++) {
 				Cluster otherCluster = clusters.get(j);
-				if (cluster.getCedd().getDistance(otherCluster.getCedd()) != 0 ) {
+				if (cluster.getFeature().getDistance(otherCluster.getFeature()) != 0 ) {
 					pairings.add(new ClusterPair(cluster, otherCluster));
 				}
 			}

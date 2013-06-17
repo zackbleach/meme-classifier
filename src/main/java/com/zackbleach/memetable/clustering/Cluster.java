@@ -3,11 +3,11 @@ package com.zackbleach.memetable.clustering;
 public class Cluster {
 
 	private String name;
-	//Distance measurement
-	private CEDD cedd;
+	private MemeFeature feature;
 	private Cluster parent;
 	private Cluster[] children = new Cluster[2];
 	private int height = 0;
+	private float difference;
 	
 	public String getName() {
 		return name;
@@ -21,11 +21,11 @@ public class Cluster {
 	public void setParent(Cluster parent) {
 		this.parent = parent;
 	}
-	public CEDD getCedd() {
-		return cedd;
+	public MemeFeature getFeature() {
+		return feature;
 	}
-	public void setCedd(CEDD cedd) {
-		this.cedd = cedd;
+	public void setFeature(MemeFeature feature) {
+		this.feature = feature;
 	}
 	public Cluster[] getChildren() {
 		return children;
@@ -43,7 +43,7 @@ public class Cluster {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((cedd == null) ? 0 : cedd.getDoubleHistogram().hashCode());
+		result = prime * result + ((feature == null) ? 0 : feature.getDoubleHistogram().hashCode());
 		return result;
 	}
 	@Override
@@ -55,10 +55,10 @@ public class Cluster {
 		if (getClass() != obj.getClass())
 			return false;
 		Cluster other = (Cluster) obj;
-		if (cedd == null) {
-			if (other.cedd != null)
+		if (feature == null) {
+			if (other.feature != null)
 				return false;
-		} else if (!cedd.getDoubleHistogram().equals(other.cedd.getDoubleHistogram()))
+		} else if (!feature.getDoubleHistogram().equals(other.feature.getDoubleHistogram()))
 			return false;
 		return true;
 	}
@@ -67,7 +67,14 @@ public class Cluster {
 	}
 	@Override
 	public String toString() {
-		return "{Name: " + name + " | " + "Height: " + height + "}";
+		return "{Name: " + name + " | " + "Height: " + height + " | " + "Distance: " + difference + "}";
 	}
+	public float getDifference() {
+		return difference;
+	}
+	public void setDifference(float difference) {
+		this.difference = difference;
+	}
+	
 	
 }

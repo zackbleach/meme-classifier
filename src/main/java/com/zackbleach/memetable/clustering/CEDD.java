@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
  *
  * @author: Savvas A. Chatzichristofis, savvash@gmail.com
  */
-public class CEDD implements LireFeature {
+public class CEDD implements MemeFeature {
     public double T0;
     public double T1;
     public double T2;
@@ -399,7 +399,19 @@ public class CEDD implements LireFeature {
     public double[] getDoubleHistogram() {
         return data;
     }
-    public void setDoubleHistogram(double[] data) {
+    private void setDoubleHistogram(double[] data) {
     	this.data = data;
     }
+
+	@Override
+	public MemeFeature averageFeature(MemeFeature feature) {
+		//TODO: am I looking at the right kind of object?
+		CEDD averageHistogram = new CEDD();
+		double[] clusterSmash = new double[144];
+		for (int i = 0; i < this.getDoubleHistogram().length; i++) {
+			clusterSmash[i] = (this.getDoubleHistogram()[i] + feature.getDoubleHistogram()[i]) / 2;
+		}
+		averageHistogram.setDoubleHistogram(clusterSmash);
+		return averageHistogram;
+	}
 }
