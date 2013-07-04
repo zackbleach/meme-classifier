@@ -14,8 +14,5 @@
     <context:component-scan base-package="com.zackbleach.memetable.controller" />
     <bean id="documentationConfig" class="com.mangofactory.swagger.configuration.DocumentationConfig"/>
     <bean id="extensibilityModule" class="com.mangofactory.swagger.springmvc.example.config.ExampleExtensibilityModule" />
-    <bean id="hierarchyBuilder" class="com.zackbleach.memetable.clustering.HierarchyBuilder"/>
-    <bean id="clusterer" class="com.zackbleach.memetable.clustering.Clusterer">
-    	<property name = "hierarchyBuilder"> <ref bean="hierarchyBuilder"/></property>
-    </bean>                                      
+                       
 </beans>

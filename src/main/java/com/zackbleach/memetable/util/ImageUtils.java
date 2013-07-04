@@ -3,7 +3,11 @@ package com.zackbleach.memetable.util;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,16 +23,16 @@ import com.zackbleach.memetable.contentextraction.MemeExtractor;
 public class ImageUtils {
 	
 	private static final Logger log = Logger.getLogger(ImageUtils.class);
-
+	
 	public static BufferedImage getImageFromSite(String path) throws IOException, URISyntaxException {
-		MemeExtractor scraper = new MemeExtractor();
-		BufferedImage meme = scraper.extractMeme(path);
-		return meme;
+		MemeExtractor ext = new MemeExtractor();
+		return ext.extractMeme(path).getImage();
 	}
 	
 	public static boolean saveImage(String path, String folder) {
+		MemeExtractor ext = new MemeExtractor();
 		try {
-			saveImage(getImageFromSite(path), path, folder);
+			saveImage(ext.extractMeme(path).getImage(), path, folder);
 		} catch (IOException ioe) {
 			log.warn("Problem saving image: " + path, ioe);
 		} catch (URISyntaxException urie) {
@@ -87,4 +91,26 @@ public class ImageUtils {
 		return ImmutableList.of(image1Scaled, image2Scaled);
 	}
 	
+	public static boolean isImage(String path) throws IOException{
+		return checkContentType(path) || checkExtension(path);
+	}
+
+	private static boolean checkExtension(String path) {
+		boolean isImage = false;
+		for (String s : ImageIO.getReaderFormatNames()) {
+			if (path.endsWith(s)) {
+				isImage = true;
+				break;
+			}
+		}
+		return isImage;
+	}
+
+	private static boolean checkContentType(String path) throws MalformedURLException,IOException, ProtocolException {
+		URL url = new URL(path);
+		HttpURLConnection connection = (HttpURLConnection)  url.openConnection();
+		connection.setRequestMethod("HEAD");
+		connection.connect();
+		return connection.getContentType().contains("image");
+	}
 }

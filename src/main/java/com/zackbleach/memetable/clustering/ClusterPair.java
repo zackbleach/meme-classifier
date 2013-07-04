@@ -5,15 +5,14 @@ import java.util.Set;
 
 import org.springframework.util.StringUtils;
 
-public class ClusterPair implements Comparable<ClusterPair>{
+public class ClusterPair implements Comparable<ClusterPair> {
 	
-	private Set<Cluster> clusters;
+	private Cluster[] clusters = new Cluster[2];
 	private float distance;
 	
 	public ClusterPair(Cluster left, Cluster right) {
-		clusters = new HashSet<Cluster>();
-		clusters.add(left);
-		clusters.add(right);
+		clusters[0] = left;
+		clusters[1] = right;
 		distance = left.getFeature().getDistance(right.getFeature());
 	}
 	
@@ -21,14 +20,14 @@ public class ClusterPair implements Comparable<ClusterPair>{
 		return distance;
 	}
 	
-	public Set<Cluster> getClusters() {
+	public Cluster[] getClusters() {
 		return clusters;
 	}
 	
 	public Cluster agglomerate() {
-		Cluster[] lr = clusters.toArray(new Cluster[2]);
-		Cluster left = lr[0];
-		Cluster right = lr[1];
+
+		Cluster left = clusters[0];
+		Cluster right = clusters[1];
 		Cluster cluster = new Cluster();
 		cluster = setClusterName(left, right, cluster);
 		cluster = setClusterChildren(left, right, cluster);

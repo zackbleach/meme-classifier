@@ -9,9 +9,9 @@ import org.apache.log4j.Logger;
 
 import com.zackbleach.memetable.cache.MemeCache;
 import com.zackbleach.memetable.clustering.CEDD;
+import com.zackbleach.memetable.contentextraction.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.imagerecognition.Searcher;
-import static com.zackbleach.memetable.util.ImageUtils.getImageFromSite;
 
 public class ClassificationUtils {
 	
@@ -21,7 +21,8 @@ public class ClassificationUtils {
 	public static final int THRESHOLD = 10;
 	
 	public static Result classifyMemeFromPath(String path) throws IOException, URISyntaxException {
-		BufferedImage meme = getImageFromSite(path);
+		MemeExtractor ext = new MemeExtractor();
+		BufferedImage meme = ext.extractMeme(path).getImage();
 		return classifyMemeFromImage(meme);
 	}
 	

@@ -134,14 +134,16 @@ public class OpponentHistogram extends Histogram implements MemeFeature {
                 throw new IndexOutOfBoundsException("Too few numbers in string representation.");
             descriptor[i] = Integer.parseInt(st.nextToken());
         }
-
     }
 
 	@Override
 	public MemeFeature averageFeature(MemeFeature feature) {
 		//TODO: am I looking at the right kind of object?
+		if (feature == null) {
+			throw new UnsupportedOperationException("cannot merge with null feature");
+		}
 		OpponentHistogram averageHistogram = new OpponentHistogram();
-		double[] clusterSmash = new double[144];
+		double[] clusterSmash = new double[this.getDoubleHistogram().length];
 		for (int i = 0; i < this.getDoubleHistogram().length; i++) {
 			clusterSmash[i] = (this.getDoubleHistogram()[i] + feature.getDoubleHistogram()[i]) / 2;
 		}

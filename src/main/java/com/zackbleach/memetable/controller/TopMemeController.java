@@ -24,6 +24,7 @@ import com.zackbleach.memetable.imagerecognition.Indexer;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.scraper.Post;
 import com.zackbleach.memetable.scraper.RedditScraper;
+import com.zackbleach.memetable.scraper.Scraper;
 import com.zackbleach.memetable.util.ImageUtils;
 
 @Controller
@@ -50,7 +51,7 @@ public class TopMemeController {
     private ResponseEntity<TopMemes> getTopMemes(boolean downloadUnknown, boolean collateMemes)
             throws IOException, JsonParseException, JsonMappingException {
         Indexer.index();
-        RedditScraper scraper = new RedditScraper();
+        Scraper scraper = new RedditScraper();
         List<Post> posts = scraper.scrape();
         List<TopMeme> results = getTopMemesList(posts, downloadUnknown);
         TopMemes top = new TopMemes();

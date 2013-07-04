@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.zackbleach.memetable.contentextraction.MemeExtractor;
 
-public class RedditScraper {
+public class RedditScraper implements Scraper {
 	
 	private static final Logger log = Logger.getLogger(MemeExtractor.class);
 	private static final String ADVICE_ANIMALS = "http://www.reddit.com/r/adviceanimals.json";
@@ -32,6 +32,10 @@ public class RedditScraper {
 	public RedditScraper() {
 	}
 
+	/* (non-Javadoc)
+	 * @see com.zackbleach.memetable.scraper.Scraper#scrape()
+	 */
+	@Override
 	public List<Post> scrape() throws JsonParseException, JsonMappingException, IOException {
            String json = getPage();
            ObjectMapper mapper = new ObjectMapper();

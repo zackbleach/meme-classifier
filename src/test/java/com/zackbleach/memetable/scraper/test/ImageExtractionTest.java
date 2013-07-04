@@ -24,7 +24,7 @@ public class ImageExtractionTest {
 	final static String MEMECREATOR = "http://www.memecreator.org/meme/find-out-theres-a-forever-alone-tiny-chat-way-too-nervous-to-get-in-the-convo-or/";
 	final static String UNKNOWN_SITE_1 = "http://pulse2.com/2012/07/15/breaking-bad-meme/22/";
 	final static String UNKNOWN_SITE_2 = "http://cheezburger.com/4863560192";
-	final static String UNKNOWN_SITE_3 = "http://www.piratefox.com/what-is-a-meme/";
+	final static String UNKNOWN_SITE_3 = "http://www.dumpaday.com/random-pictures/funny-pictures/best-of-the-willy-wonka-meme-35-pics/";
 	final static String BAD_URL = "aaaaaaa";
 
 	@Test
@@ -84,14 +84,14 @@ public class ImageExtractionTest {
 	
 	public Image getImageFromSite(String path) throws IOException, URISyntaxException {
 		MemeExtractor scraper = new MemeExtractor();
-		Image meme = scraper.extractMeme(path);
+		Image meme = scraper.extractMeme(path).getImage();
 		return meme;
 	}
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		//main method to allow us to see the image downloaded
 		MemeExtractor scraper = new MemeExtractor();
-		final Image meme = scraper.extractMeme("");
+		final Image meme = scraper.extractMeme("").getImage();
 		new ImageViewer(meme);
 	}
 }

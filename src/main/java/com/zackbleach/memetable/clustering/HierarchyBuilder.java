@@ -7,26 +7,26 @@ import java.util.List;
 import java.util.Set;
 
 public class HierarchyBuilder {
-
-	private List<Cluster> clusters;
-	private Set<ClusterPair> pairs;
 	
-	public HierarchyBuilder(List<Cluster> clusters, Set<ClusterPair> distances) {
-		this.clusters = clusters;
-		this.pairs = distances;
+	private final static int MAGICAL_MEME_DISTANCE = 10; 
+	
+	public HierarchyBuilder() {
 	}
 	
-	public Cluster buildHeirarchy() {
+	public Cluster buildHeirarchy(List<Cluster> clusters, Set<ClusterPair> pairs) {
 		while (pairs.size() > 0) {
 			ClusterPair[] orderedPairs = pairs.toArray(new ClusterPair[pairs.size()]);
 			Arrays.sort(orderedPairs);
 			ClusterPair minDistance = orderedPairs[0];
+			if (minDistance.getDistance() > MAGICAL_MEME_DISTANCE) {
+				break;
+			}
 			Cluster newCluster = minDistance.agglomerate();
-			clusters.removeAll(minDistance.getClusters());
+			clusters.removeAll(Arrays.asList(minDistance.getClusters()));
 			Iterator<ClusterPair> it = pairs.iterator(); 
 			while (it.hasNext()) {
 				ClusterPair p = it.next();
-				if (!Collections.disjoint(p.getClusters(), minDistance.getClusters())) {
+				if (!Collections.disjoint(Arrays.asList(p.getClusters()), Arrays.asList(minDistance.getClusters()))) {
 					it.remove();
 				}
 			}
@@ -35,6 +35,14 @@ public class HierarchyBuilder {
 			}
 			clusters.add(newCluster);
 		}
-		return clusters.get(0);
+		return finalCluster(clusters);
+	}
+	
+	private Cluster finalCluster(List<Cluster> cs) {
+		Cluster root = new Cluster();
+		Cluster[] children = cs.toArray(new Cluster[cs.size()]);
+		root.setName("Clusters");
+		root.setChildren(children);
+		return root;
 	}
 }

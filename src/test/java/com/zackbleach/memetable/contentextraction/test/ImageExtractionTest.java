@@ -1,15 +1,18 @@
 package com.zackbleach.memetable.contentextraction.test;
 
-import static com.zackbleach.memetable.util.ImageUtils.getImageFromSite;
-
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import junit.framework.Assert;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.junit.Test;
 
+import com.zackbleach.memetable.contentextraction.ExtractedMeme;
 import com.zackbleach.memetable.contentextraction.MemeExtractor;
 import com.zackbleach.memetable.util.ImageViewer;
 
@@ -80,10 +83,24 @@ public class ImageExtractionTest {
 		Assert.assertNotNull(meme);
 	}
 	
+	@Test
+	public void extractTextFromUrl() throws IOException {
+		Document doc = Jsoup.connect("http://www.quickmeme.com/meme/3uvtrw/").get();
+		Element e = doc.getElementById("meme_name");
+		System.out.println(e.ownText());
+	}
+	
+	public BufferedImage getImageFromSite(String path) throws IOException, URISyntaxException {
+		MemeExtractor ext = new MemeExtractor();
+		ExtractedMeme m = ext.extractMeme(path);
+		System.out.println("Found instance of: " + m.getName());
+		return m.getImage();
+	}
+	
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		//main method to allow us to see the image downloaded
 		MemeExtractor scraper = new MemeExtractor();
-		final Image meme = scraper.extractMeme("");
+		final BufferedImage meme = scraper.extractMeme("").getImage();
 		new ImageViewer(meme);
 	}
 }
