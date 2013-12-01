@@ -21,7 +21,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
 
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
+import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Result;
 
 public class Searcher {

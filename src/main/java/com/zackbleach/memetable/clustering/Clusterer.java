@@ -16,15 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.zackbleach.memetable.contentextraction.ExtractedMeme;
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
-import com.zackbleach.memetable.imagerecognition.Meme;
+import com.zackbleach.memetable.contentextraction.entity.ExtractedEntity;
+import com.zackbleach.memetable.contentextraction.entity.ExtractedMeme;
+import com.zackbleach.memetable.contentextraction.extractor.Extractor;
+import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.scraper.Post;
 import com.zackbleach.memetable.scraper.RedditScraper;
 import com.zackbleach.memetable.scraper.Scraper;
 import com.zackbleach.memetable.util.ClassificationUtils;
-import com.zackbleach.memetable.util.ImageUtils;
 
 //TODO: Autowire the rest of this app
 public class Clusterer {
@@ -59,26 +59,24 @@ public class Clusterer {
 			}
 		}
 	}
-
-
 	
 	//this should just take an initial set of images and cluster them 
 	public List<Cluster> createInitialClustersFromReddit(Class<? extends MemeFeature> memeFeatureClass)
 			throws JsonParseException, JsonMappingException, IOException, URISyntaxException {
 		Scraper scraper = new RedditScraper();
 		List<Post> posts = scraper.scrape();
-		MemeExtractor m = new MemeExtractor();
-		List<ExtractedMeme> memes = new ArrayList<ExtractedMeme>();
+		Extractor extractor = new MemeExtractor();
+		List<ExtractedEntity> memes = new ArrayList<ExtractedEntity>();
 		for (Post p : posts) {
 			try {
-				ExtractedMeme extractMeme = m.extractMeme(p.getImageUrl());
+				ExtractedEntity extractMeme = extractor.extractEntity(p.getImageUrl());
 				memes.add(extractMeme);
 			} catch (SocketTimeoutException s) {
 				log.error("Read timed out, skipping...");
 			}
 		}
 		List<Cluster> clusters = new ArrayList<Cluster>();
-		for (ExtractedMeme meme : memes) {
+		for (ExtractedEntity meme : memes) {
 			MemeFeature histogram;
 			if (meme.getImage() != null) {
 				Cluster cluster = new Cluster();

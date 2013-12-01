@@ -12,7 +12,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
+import com.zackbleach.memetable.contentextraction.extractor.Extractor;
+import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 import com.zackbleach.memetable.util.ImageViewer;
 
 public class ImageExtractionTest {
@@ -83,15 +84,15 @@ public class ImageExtractionTest {
 	}
 	
 	public Image getImageFromSite(String path) throws IOException, URISyntaxException {
-		MemeExtractor scraper = new MemeExtractor();
-		Image meme = scraper.extractMeme(path).getImage();
+		Extractor scraper = new MemeExtractor();
+		Image meme = scraper.extractEntity(path).getImage();
 		return meme;
 	}
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		//main method to allow us to see the image downloaded
-		MemeExtractor scraper = new MemeExtractor();
-		final Image meme = scraper.extractMeme("").getImage();
+		Extractor scraper = new MemeExtractor();
+		final Image meme = scraper.extractEntity("").getImage();
 		new ImageViewer(meme);
 	}
 }

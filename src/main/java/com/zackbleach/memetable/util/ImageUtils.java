@@ -18,21 +18,22 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
+import com.zackbleach.memetable.contentextraction.extractor.Extractor;
+import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 
 public class ImageUtils {
 	
 	private static final Logger log = Logger.getLogger(ImageUtils.class);
 	
 	public static BufferedImage getImageFromSite(String path) throws IOException, URISyntaxException {
-		MemeExtractor ext = new MemeExtractor();
-		return ext.extractMeme(path).getImage();
+		Extractor ext = new MemeExtractor();
+		return ext.extractEntity(path).getImage();
 	}
 	
 	public static boolean saveImage(String path, String folder) {
-		MemeExtractor ext = new MemeExtractor();
+		Extractor ext = new MemeExtractor();
 		try {
-			saveImage(ext.extractMeme(path).getImage(), path, folder);
+			saveImage(ext.extractEntity(path).getImage(), path, folder);
 		} catch (IOException ioe) {
 			log.warn("Problem saving image: " + path, ioe);
 		} catch (URISyntaxException urie) {

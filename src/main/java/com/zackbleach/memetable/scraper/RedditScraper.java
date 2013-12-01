@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
+import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 
 public class RedditScraper implements Scraper {
 	

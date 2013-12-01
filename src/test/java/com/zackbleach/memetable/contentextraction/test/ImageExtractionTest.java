@@ -12,8 +12,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Test;
 
-import com.zackbleach.memetable.contentextraction.ExtractedMeme;
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
+import com.zackbleach.memetable.contentextraction.entity.ExtractedEntity;
+import com.zackbleach.memetable.contentextraction.extractor.Extractor;
+import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 import com.zackbleach.memetable.util.ImageViewer;
 
 public class ImageExtractionTest {
@@ -91,16 +92,16 @@ public class ImageExtractionTest {
 	}
 	
 	public BufferedImage getImageFromSite(String path) throws IOException, URISyntaxException {
-		MemeExtractor ext = new MemeExtractor();
-		ExtractedMeme m = ext.extractMeme(path);
+		Extractor ext = new MemeExtractor();
+		ExtractedEntity m = ext.extractEntity(path);
 		System.out.println("Found instance of: " + m.getName());
 		return m.getImage();
 	}
 	
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		//main method to allow us to see the image downloaded
-		MemeExtractor scraper = new MemeExtractor();
-		final BufferedImage meme = scraper.extractMeme("").getImage();
+		Extractor scraper = new MemeExtractor();
+		final BufferedImage meme = scraper.extractEntity("").getImage();
 		new ImageViewer(meme);
 	}
 }

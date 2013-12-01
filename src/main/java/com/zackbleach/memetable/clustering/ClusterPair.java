@@ -1,8 +1,5 @@
 package com.zackbleach.memetable.clustering;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.util.StringUtils;
 
 public class ClusterPair implements Comparable<ClusterPair> {

@@ -21,6 +21,8 @@ public class HierarchyBuilder {
 			if (minDistance.getDistance() > MAGICAL_MEME_DISTANCE) {
 				break;
 			}
+            System.out.println("Hello");
+
 			Cluster newCluster = minDistance.agglomerate();
 			clusters.removeAll(Arrays.asList(minDistance.getClusters()));
 			Iterator<ClusterPair> it = pairs.iterator(); 

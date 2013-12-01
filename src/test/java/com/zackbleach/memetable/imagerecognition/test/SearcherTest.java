@@ -10,7 +10,8 @@ import java.net.URISyntaxException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.zackbleach.memetable.contentextraction.MemeExtractor;
+import com.zackbleach.memetable.contentextraction.extractor.Extractor;
+import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Meme;
 import com.zackbleach.memetable.util.ImageViewer;
 
@@ -38,7 +39,7 @@ public class SearcherTest {
 
 	public static void main(String[] args) throws IOException, URISyntaxException {
 		//main method to allow us to see the image downloaded
-		MemeExtractor scraper = new MemeExtractor();
+		Extractor scraper = new MemeExtractor();
 		BufferedImage meme = getImageFromSite(PHILOSORAPTOR_IMAGE);
 		new ImageViewer(meme);
 	}
