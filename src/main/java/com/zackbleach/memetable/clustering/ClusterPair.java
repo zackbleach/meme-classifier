@@ -2,21 +2,19 @@ package com.zackbleach.memetable.clustering;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import scala.util.logging.Logged;
 
 public class ClusterPair implements Comparable<ClusterPair> {
 
     private Cluster[] clusters = new Cluster[2];
     private float distance;
 
-    private static final Logger logger = LoggerFactory.getLogger(ClusterPair.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(ClusterPair.class);
 
     public ClusterPair(Cluster left, Cluster right) {
         clusters[0] = left;
@@ -61,16 +59,18 @@ public class ClusterPair implements Comparable<ClusterPair> {
     }
 
     private Cluster setClusterName(Cluster left, Cluster right, Cluster cluster) {
-        String longestSubstring = StringUtils.trim(longestSubstring(left.getName(),
-                right.getName()));
-        //TODO: If the substring does not appear in the split array of either name then forget about it
-        //TODO: this should be lowercased way earlier
-        String[] nameLeftSplit = StringUtils.split(left.getName().toLowerCase(), " ");
-        String[] nameRightSplit = StringUtils.split(right.getName().toLowerCase(), " ");
+        String longestSubstring = StringUtils.trim(longestSubstring(
+                left.getName(), right.getName()));
+        // TODO: If the substring does not appear in the split array of either
+        // name then forget about it (probably a single letter or something
+        // uninteresting).
+        String[] nameLeftSplit = StringUtils.split(left.getName(), " ");
+        String[] nameRightSplit = StringUtils.split(right.getName(), " ");
         List<String> possibleNames = new ArrayList<String>();
         possibleNames.addAll(Arrays.asList(nameLeftSplit));
         possibleNames.addAll(Arrays.asList(nameRightSplit));
-        if (possibleNames.containsAll(Arrays.asList(StringUtils.split(longestSubstring, " ")))) {
+        if (possibleNames.containsAll(Arrays.asList(StringUtils.split(
+                longestSubstring, " ")))) {
             cluster.setName(longestSubstring);
             return cluster;
         }
