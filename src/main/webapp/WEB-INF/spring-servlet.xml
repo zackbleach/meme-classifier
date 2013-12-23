@@ -11,11 +11,7 @@
 	<mvc:default-servlet-handler/>
     <context:property-placeholder location="classpath:swagger.properties" />
     <context:property-placeholder location="classpath:memetable.properties" />
-    <context:component-scan base-package="com.zackbleach.memetable.controller" />
+    <context:component-scan base-package="com.zackbleach.memetable" />
     <bean id="documentationConfig" class="com.mangofactory.swagger.configuration.DocumentationConfig"/>
     <bean id="extensibilityModule" class="com.mangofactory.swagger.springmvc.example.config.ExampleExtensibilityModule" />
-    <bean id="hierarchyBuilder" class="com.zackbleach.memetable.clustering.HierarchyBuilder"/>
-    <bean id="clusterer" class="com.zackbleach.memetable.clustering.Clusterer">
-    	<property name = "hierarchyBuilder"> <ref bean="hierarchyBuilder"/></property>
-    </bean>                                      
 </beans>

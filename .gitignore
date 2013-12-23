@@ -2,6 +2,7 @@ Eclipse files
 .classpath
 .project
 .settings
+workbench.xmi
 
 # build artifacts
 target/
@@ -15,3 +16,6 @@ src/main/webapp/index.html
 Memes/
 TestMemes/
 index/
+downloadedMemes/
+TestCluster/
+

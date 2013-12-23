@@ -31,7 +31,6 @@ import com.zackbleach.memetable.util.ImageUtils;
 @RequestMapping("api/memes")
 public class TopMemeController {
 
-    private int test;
     private static final Logger log = Logger.getLogger(TopMemeController.class);
 
     @RequestMapping(value = "/frontpage", method = RequestMethod.GET)
@@ -105,6 +104,9 @@ public class TopMemeController {
         return meme;
     }
 
+    /**
+     * Will try to get from cache - if unavailable will classify
+     */
     private Result attemptToRetrieveFromCache(String path) {
         Result r = null;
         try {
@@ -113,19 +115,5 @@ public class TopMemeController {
             e.printStackTrace();
         }
         return r;
-    }
-
-    /**
-     * @return the test
-     */
-    public int getTest() {
-        return test;
-    }
-
-    /**
-     * @param test the test to set
-     */
-    public void setTest(int test) {
-        this.test = test;
     }
 }

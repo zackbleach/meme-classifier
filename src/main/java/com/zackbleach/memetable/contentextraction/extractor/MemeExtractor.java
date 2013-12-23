@@ -68,7 +68,6 @@ public class MemeExtractor implements Extractor {
         } else {
             meme.setImage(extractFromUnknownSite(doc));
         }
-
         return meme;
     }
 
@@ -104,13 +103,8 @@ public class MemeExtractor implements Extractor {
                 return extractFromUnknownSite(doc);
             }
             String url = image.absUrl("src");
-            try {
-                log.info("Downloading image: " + url);
-                meme = downloadImage(url);
-                break;
-            } catch (IOException e) {
-                log.warn("Failed to get image from url: " + url);
-            }
+            log.info("Downloading image: " + url);
+            meme = downloadImage(url);
         }
         return meme;
     }
@@ -158,11 +152,7 @@ public class MemeExtractor implements Extractor {
         log.info("Unknown site, downloading all images and using biggest one");
         List<ImageIcon> images = new ArrayList<ImageIcon>();
         for (Element e : doc.select("img")) {
-            try {
-                images.add(new ImageIcon(downloadImage(e.attr("src"))));
-            } catch (MalformedURLException mue) {
-                log.info("Couldn't get image :" + e.attr("src") + "\nSkipping...");
-            }
+            images.add(new ImageIcon(downloadImage(e.attr("src"))));
         }
         return images;
     }
@@ -187,10 +177,21 @@ public class MemeExtractor implements Extractor {
         return (BufferedImage) images.get(largestImageIndex).getImage();
     }
 
-    private BufferedImage downloadImage(String path) throws IOException {
+    //TODO: should these exceptions be here?
+    private BufferedImage downloadImage(String path) {
         BufferedImage image = null;
-        URL url = new URL(path);
-        image = ImageIO.read(url);
+        URL url;
+        try {
+            url = new URL(path);
+        } catch (MalformedURLException e1) {
+            log.warn("Failed to download image from path: " + path + " ,invalid path");
+            return null;
+        }
+        try {
+            image = ImageIO.read(url);
+        } catch (IOException e) {
+            log.warn("Failed to download image from path: " + path + " ,couldn't read image");
+        } 
         return image;
     }
 }
