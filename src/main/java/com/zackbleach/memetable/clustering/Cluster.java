@@ -2,7 +2,7 @@ package com.zackbleach.memetable.clustering;
 
 public class Cluster {
 
-    private String name;
+    private String name = "unknown";
     private MemeFeature feature;
     private Cluster parent;
     private Cluster[] children = new Cluster[2];

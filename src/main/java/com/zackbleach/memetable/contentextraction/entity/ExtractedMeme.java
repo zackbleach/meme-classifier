@@ -25,7 +25,7 @@ public class ExtractedMeme implements ExtractedEntity {
 
     @Override
     public void setName(String name) {
-        this.name = name.toLowerCase();
+        this.name = name;
     }
 
     @Override

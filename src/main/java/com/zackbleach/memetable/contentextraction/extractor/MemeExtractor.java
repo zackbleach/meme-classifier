@@ -1,12 +1,15 @@
 package com.zackbleach.memetable.contentextraction.extractor;
 
 import java.awt.image.BufferedImage;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -16,48 +19,62 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.zackbleach.memetable.cache.MemeCache;
 import com.zackbleach.memetable.contentextraction.Site;
 import com.zackbleach.memetable.contentextraction.entity.ExtractedEntity;
 import com.zackbleach.memetable.contentextraction.entity.ExtractedMeme;
+import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.util.ImageUtils;
 import com.zackbleach.memetable.util.URLUtils;
 
+@Component
 public class MemeExtractor implements Extractor {
 
+    @Autowired
+    MemeCache memeCache;
+
     private static final Logger log = Logger.getLogger(MemeExtractor.class);
-    
-    /* (non-Javadoc)
-     * @see com.zackbleach.memetable.contentextraction.Extractor#extractMeme(java.lang.String)
-     */
-    
-    public ExtractedEntity extractEntity(String path) throws IOException, URISyntaxException {
+
+    //TODO: Consider refactoring this to take a URL object as a param?
+    public ExtractedEntity extractEntity(String path) throws IOException,
+            URISyntaxException {
+        ExtractedMeme meme = new ExtractedMeme();
         URLUtils.validateUrl(path);
         log.info("Beginning meme extraction from: " + path);
-        ExtractedMeme meme = new ExtractedMeme();
         if (ImageUtils.isImage(path)) {
-            log.info("Found path to image");
-            meme.setImage(downloadImage(path));
+            meme = retrieveMemeFromImage(path);
         } else {
-            log.info("Found path to HTML page");
             meme = retrieveMemeFromHtml(path);
         }
-        if (meme != null) {
-            log.info("Rertrieved meme.... Great success");
-        }
+        log.info("Rertrieved meme.... Great success");
         return meme;
     }
-    
+
     /**
-     * If an extraction pattern for the passed in URL exists
-     * uses that to extract image. If it doesn't hands URL to 
-     * extractFromUnknownSite() method
-     * @param path URL to extract meme from
+     * If an extraction pattern for the passed in URL exists uses that to
+     * extract image. If it doesn't hands URL to extractFromUnknownSite() method
+     *
+     * @param path
+     *            URL to extract meme from
      * @return {@link BufferedImage} Meme
      * @throws IOException
      * @throws URISyntaxException
      */
-    private ExtractedMeme retrieveMemeFromHtml(String path) throws IOException, URISyntaxException {
+    private ExtractedMeme retrieveMemeFromImage(String path)
+            throws IOException, URISyntaxException {
+        log.info("Extracting meme from image");
+        ExtractedMeme meme = new ExtractedMeme();
+        meme.setImage(downloadImage(path));
+        meme.setName(extractNameFromUnkownSiteOrImageUsingClassifier(path));
+        return meme;
+    }
+
+    private ExtractedMeme retrieveMemeFromHtml(String path) throws IOException,
+            URISyntaxException {
+        log.info("Extracting Meme from HTML page");
         Document doc = getDocumentFromPath(path);
         String domain = URLUtils.getDomainName(path);
         ExtractedMeme meme = new ExtractedMeme();
@@ -66,14 +83,16 @@ public class MemeExtractor implements Extractor {
             meme.setImage(extractImageFromKnownSite(s, doc));
             meme.setName(extractNameFromKnownSite(s, doc));
         } else {
-            meme.setImage(extractFromUnknownSite(doc));
+            meme.setImage(extractImageFromUnknownSite(doc));
         }
         return meme;
     }
 
     /**
      * Returns the HTML of a given path enclosed in a {@link Document}
-     * @param path URL to get document from
+     *
+     * @param path
+     *            URL to get document from
      * @return a {@link Document}
      * @throws IOException
      */
@@ -86,40 +105,19 @@ public class MemeExtractor implements Extractor {
     }
 
     /**
-     * Downloads the HTML source and then uses the provided pattern
-     * so retrieve the URL to the image. The image is then downloaded
-     * and returned.
-     * @param path URL to extract meme from
-     * @param pattern RegEx used to match meme location
-     * @return {@link BufferedImage} representing the extracted meme
-     * @throws IOException
-     */
-    private BufferedImage extractImageFromKnownSite(Site site, Document doc) throws IOException {
-        BufferedImage meme = null;
-        for (String s : site.getImageExtractionPatterns()) {
-            Element image = doc.select(s).first();
-            //TODO: tidy up
-            if (image == null) {
-                return extractFromUnknownSite(doc);
-            }
-            String url = image.absUrl("src");
-            log.info("Downloading image: " + url);
-            meme = downloadImage(url);
-        }
-        return meme;
-    }
-    
-    /**
-     * Attempts to get the name of a meme using one of the
-     * predefined extraction patterns from a site
-     * @param site Site extraction patterns to use
-     * @param doc Document to extract name from 
+     * Attempts to get the name of a meme using one of the predefined extraction
+     * patterns from a site
+     *
+     * @param site
+     *            Site extraction patterns to use
+     * @param doc
+     *            Document to extract name from
      * @return Name of Extracted Entity
      */
     private String extractNameFromKnownSite(Site site, Document doc) {
         String name = null;
-        for (String extractionPattern: site.getImageNameExtractionPatterns()) {
-            Element e = doc.getElementById(extractionPattern);      
+        for (String extractionPattern : site.getImageNameExtractionPatterns()) {
+            Element e = doc.getElementById(extractionPattern);
             name = e.ownText();
             if (StringUtils.isNotEmpty(name)) {
                 break;
@@ -128,23 +126,54 @@ public class MemeExtractor implements Extractor {
         return name;
     }
 
+    private String extractNameFromUnkownSiteOrImageUsingClassifier(String path) {
+        String name = "";
+        Result result;
+        try {
+            result = memeCache.getCache().get(path);
+            name = result.getMeme().name();
+        } catch (ExecutionException e) {
+            log.warn("Failed to retrieve name from cache, tried path: " + path);
+        }
+        return name;
+    }
+
     /**
-     * If we find a site we don't have an extraction pattern for first check to see
-     * that it is an HTML document. If it is, just get the largest image on the page. 
-     * @param path URL to extract meme from
+     * see that it is an HTML document. If it is, just get the largest image on
+     * If we find a site we don't have an extraction pattern for first check to
+     * the page.
+     *
+     * @param path
+     *            URL to extract meme from
      * @return {@link BufferedImage} representing the extracted meme
      * @throws IOException
      */
-    private BufferedImage extractFromUnknownSite(Document doc) throws IOException {
+    private BufferedImage extractImageFromUnknownSite(Document doc)
+            throws IOException {
         List<ImageIcon> images = getAllImages(doc);
         return getLargestImage(images);
     }
 
-    
+    private BufferedImage extractImageFromKnownSite(Site site, Document doc) throws IOException {
+        BufferedImage meme = null;
+        for (String s : site.getImageExtractionPatterns()) {
+            Element image = doc.select(s).first();
+            if (image == null) {
+                return extractImageFromUnknownSite(doc);
+            }
+            String url = image.absUrl("src");
+            log.info("Downloading image: " + url);
+            meme = downloadImage(url);
+        }
+        return meme;
+    }
+
     /**
-     * Given a {@link Document} returns a list of images representing
-     * all images on the site
-     * @param doc HTML Document
+     * Given a {@link Document} returns a list of images representing all images
+     * on the site
+     *
+     * @param doc
+     *            HTML Document
      * @return All images from the document
      * @throws IOException
      */
@@ -156,10 +185,12 @@ public class MemeExtractor implements Extractor {
         }
         return images;
     }
-    
+
     /**
      * Given a list of {@link BufferedImage}, returns the largest one
-     * @param images List of images
+     *
+     * @param images
+     *            List of images
      * @return the image with the biggest area
      */
     private BufferedImage getLargestImage(List<ImageIcon> images) {
@@ -177,21 +208,23 @@ public class MemeExtractor implements Extractor {
         return (BufferedImage) images.get(largestImageIndex).getImage();
     }
 
-    //TODO: should these exceptions be here?
+    // TODO: should these exceptions be here?
     private BufferedImage downloadImage(String path) {
         BufferedImage image = null;
         URL url;
         try {
             url = new URL(path);
         } catch (MalformedURLException e1) {
-            log.warn("Failed to download image from path: " + path + " ,invalid path");
+            log.warn("Failed to download image from path: " + path
+                    + " ,invalid path");
             return null;
         }
         try {
             image = ImageIO.read(url);
         } catch (IOException e) {
-            log.warn("Failed to download image from path: " + path + " ,couldn't read image");
-        } 
+            log.warn("Failed to download image from path: " + path
+                    + " ,couldn't read image");
+        }
         return image;
     }
 }

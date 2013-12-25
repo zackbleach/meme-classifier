@@ -3,17 +3,20 @@ package com.zackbleach.memetable.cache;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import org.springframework.stereotype.Component;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.util.ClassificationUtils;
 
+@Component
 public class MemeCache {
-    
+
     private LoadingCache<String, Result> cache;
     private static MemeCache instance = new MemeCache();
-    
+
     private MemeCache() {
         cache = CacheBuilder.newBuilder()
                    .maximumSize(50)
@@ -28,9 +31,9 @@ public class MemeCache {
     public LoadingCache<String, Result> getCache() {
         return cache;
     }
-    
+
     public static MemeCache getInstance() {
         return instance;
     }
-    
+
 }

@@ -59,6 +59,18 @@ public class ClusterPair implements Comparable<ClusterPair> {
     }
 
     private Cluster setClusterName(Cluster left, Cluster right, Cluster cluster) {
+        if (StringUtils.isBlank(left.getName()) && StringUtils.isBlank(right.getName()))  {
+            return cluster;
+        }
+        if (StringUtils.isBlank(left.getName())) {
+            cluster.setName(right.getName());
+            return cluster;
+        }
+
+        if (StringUtils.isBlank(right.getName())) {
+            cluster.setName(left.getName());
+            return cluster;
+        }
         String longestSubstring = StringUtils.trim(longestSubstring(
                 left.getName(), right.getName()));
         // TODO: If the substring does not appear in the split array of either

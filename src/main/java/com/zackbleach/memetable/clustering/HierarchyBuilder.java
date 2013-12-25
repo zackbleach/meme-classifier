@@ -13,18 +13,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class HierarchyBuilder {
-    private static final Log logger =
-        LogFactory.getLog(HierarchyBuilder.class);
+    private static final Log logger = LogFactory.getLog(HierarchyBuilder.class);
 
-    //TODO: delete this?
+    // TODO: delete this?
     private final static int MAGICAL_MEME_DISTANCE = 10;
 
     public HierarchyBuilder() {
-        //retrieve previous hierarchy - if one doesn't exist, start a new one?
+        // retrieve previous hierarchy - if one doesn't exist, start a new one?
     }
 
-    //TODO: add to hierarchy method
+    // TODO: add to hierarchy method
     public Cluster buildHeirarchy(List<Cluster> clusters) {
+        if (clusters.isEmpty()) {
+            throw new IllegalArgumentException("Hierarchy can not be built from supplied data set");
+        }
         Set<ClusterPair> pairs = getPairings(clusters);
         while (pairs.size() > 0) {
             ClusterPair[] orderedPairs = pairs.toArray(new ClusterPair[pairs
@@ -49,7 +51,7 @@ public class HierarchyBuilder {
         return clusters.get(0);
     }
 
-    //group all clusters in to pairs and calculate distance between them
+    // group all clusters in to pairs and calculate distance between them
     public Set<ClusterPair> getPairings(List<Cluster> clusters) {
         Set<ClusterPair> pairings = new HashSet<ClusterPair>();
         for (int i = 0; i < clusters.size(); i++) {
@@ -63,8 +65,5 @@ public class HierarchyBuilder {
         }
         return pairings;
     }
-
-
-
 
 }
