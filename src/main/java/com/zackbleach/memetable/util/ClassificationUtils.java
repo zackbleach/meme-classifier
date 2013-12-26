@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.zackbleach.memetable.cache.MemeCache;
 import com.zackbleach.memetable.clustering.CEDD;
@@ -14,6 +16,7 @@ import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.imagerecognition.Searcher;
 
+@Component
 public class ClassificationUtils {
 
     private static final Logger log = Logger
@@ -53,7 +56,7 @@ public class ClassificationUtils {
      *            Path to the image to be classified
      * @return Classification {@link Result}
      */
-    public static Result classify(String path) {
+    public Result classify(String path) {
         Result r = null;
         try {
             r = MemeCache.getInstance().getCache().get(path);

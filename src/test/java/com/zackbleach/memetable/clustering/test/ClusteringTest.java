@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,7 +12,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.zackbleach.memetable.cache.MemeCache;
 import com.zackbleach.memetable.clustering.CEDD;
 import com.zackbleach.memetable.clustering.Cluster;
 import com.zackbleach.memetable.clustering.HierarchyBuilder;
@@ -21,7 +19,6 @@ import com.zackbleach.memetable.clustering.MemeFeature;
 import com.zackbleach.memetable.clustering.OpponentHistogram;
 import com.zackbleach.memetable.contentextraction.entity.ExtractedEntity;
 import com.zackbleach.memetable.contentextraction.entity.ExtractedMeme;
-import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.util.ClassificationUtils;
 import com.zackbleach.memetable.util.ClusteringUtils;
@@ -32,7 +29,7 @@ public class ClusteringTest {
 
     private HierarchyBuilder hierarchyBuilder = new HierarchyBuilder();
     private ClusteringUtils clusteringUtils = new ClusteringUtils();
-    private MemeCache memeCache = MemeCache.getInstance();
+    private ClassificationUtils classificationUtils = new ClassificationUtils();
 
     @Test
     // TODO: this can use mocking? or maybe local html, although content
@@ -59,7 +56,7 @@ public class ClusteringTest {
                 ExtractedMeme entity = new ExtractedMeme();
                 entity.setImage(i);
                 Result result;
-                result = ClassificationUtils.classifyMemeFromImage(i);
+                result = classificationUtils.classifyMemeFromImage(i);
                 entity.setName(result.getMeme().getIdentifier().toLowerCase());
                 entities.add(entity);
             }

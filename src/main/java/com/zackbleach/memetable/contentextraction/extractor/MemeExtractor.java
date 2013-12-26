@@ -33,9 +33,6 @@ import com.zackbleach.memetable.util.URLUtils;
 @Component
 public class MemeExtractor implements Extractor {
 
-    @Autowired
-    MemeCache memeCache;
-
     private static final Logger log = Logger.getLogger(MemeExtractor.class);
 
     //TODO: Consider refactoring this to take a URL object as a param?
@@ -68,7 +65,6 @@ public class MemeExtractor implements Extractor {
         log.info("Extracting meme from image");
         ExtractedMeme meme = new ExtractedMeme();
         meme.setImage(downloadImage(path));
-        meme.setName(extractNameFromUnkownSiteOrImageUsingClassifier(path));
         return meme;
     }
 
@@ -122,18 +118,6 @@ public class MemeExtractor implements Extractor {
             if (StringUtils.isNotEmpty(name)) {
                 break;
             }
-        }
-        return name;
-    }
-
-    private String extractNameFromUnkownSiteOrImageUsingClassifier(String path) {
-        String name = "";
-        Result result;
-        try {
-            result = memeCache.getCache().get(path);
-            name = result.getMeme().name();
-        } catch (ExecutionException e) {
-            log.warn("Failed to retrieve name from cache, tried path: " + path);
         }
         return name;
     }

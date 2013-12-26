@@ -9,29 +9,22 @@ import java.awt.image.WritableRaster;
 import java.util.StringTokenizer;
 
 /**
- * Simple 64 bin Opponent Histogram, based on the Opponent color space as described in van de Sande, Gevers & Snoek (2010)
- * "Evaluating Color Descriptors for Object and Scene Recognition", IEEE PAMI (see BibTeX in the source code).
+ * Simple 64 bin Opponent Histogram, based on the Opponent color space as
+ * described in van de Sande, Gevers & Snoek (2010)
+ * "Evaluating Color Descriptors for Object and Scene Recognition", IEEE PAMI
+ * (see BibTeX in the source code).
  *
  *
- * @author Mathias Lux, mathias@juggle.at
- * Date: 18.12.12
- * Time: 11:53
+ * @author Mathias Lux, mathias@juggle.at Date: 18.12.12 Time: 11:53
  */
 
 /*
-@ARTICLE{Sande2010,
-    author={van de Sande, K.E.A. and Gevers, T. and Snoek, C.G.M.},
-    journal={Pattern Analysis and Machine Intelligence, IEEE Transactions on},
-    title={Evaluating Color Descriptors for Object and Scene Recognition},
-    year={2010},
-    month={sept. },
-    volume={32},
-    number={9},
-    pages={1582 -1596},
-    doi={10.1109/TPAMI.2009.154},
-    ISSN={0162-8828},
-}
-*/
+ * @ARTICLE{Sande2010, author={van de Sande, K.E.A. and Gevers, T. and Snoek,
+ * C.G.M.}, journal={Pattern Analysis and Machine Intelligence, IEEE
+ * Transactions on}, title={Evaluating Color Descriptors for Object and Scene
+ * Recognition}, year={2010}, month={sept. }, volume={32}, number={9},
+ * pages={1582 -1596}, doi={10.1109/TPAMI.2009.154}, ISSN={0162-8828}, }
+ */
 public class OpponentHistogram extends Histogram implements MemeFeature {
     final double sq2 = Math.sqrt(2d);
     final double sq6 = Math.sqrt(3d);
@@ -60,7 +53,9 @@ public class OpponentHistogram extends Histogram implements MemeFeature {
                 o2 = (o2 + 510d / sq6) / (1020d / sq6);
                 o3 = o3 / (3d * 255d / sq3);
                 // get the array position.
-                colorPos = (int) Math.min(Math.floor(o1 * 4d), 3d) + (int) Math.min(Math.floor(o2 * 4d), 3d) * 4 + (int) Math.min(3d, Math.floor(o3 * 4d)) * 4 * 4;
+                colorPos = (int) Math.min(Math.floor(o1 * 4d), 3d)
+                        + (int) Math.min(Math.floor(o2 * 4d), 3d) * 4
+                        + (int) Math.min(3d, Math.floor(o3 * 4d)) * 4 * 4;
                 histogram[colorPos]++;
             }
         }
@@ -100,15 +95,16 @@ public class OpponentHistogram extends Histogram implements MemeFeature {
     public double[] getDoubleHistogram() {
         return descriptor;
     }
-    
+
     private void setDoubleHistogram(double[] data) {
-    	this.descriptor = data;
+        this.descriptor = data;
     }
 
     public float getDistance(LireFeature feature) {
         if (!(feature instanceof OpponentHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
-        return (float) MetricsUtils.jsd(((OpponentHistogram) feature).descriptor, descriptor);
+        return (float) MetricsUtils.jsd(
+                ((OpponentHistogram) feature).descriptor, descriptor);
     }
 
     public String getStringRepresentation() {
@@ -127,27 +123,31 @@ public class OpponentHistogram extends Histogram implements MemeFeature {
     public void setStringRepresentation(String s) {
         StringTokenizer st = new StringTokenizer(s);
         if (!st.nextToken().equals("ophist"))
-            throw new UnsupportedOperationException("This is not a OpponentHistogram descriptor.");
+            throw new UnsupportedOperationException(
+                    "This is not a OpponentHistogram descriptor.");
         descriptor = new double[Integer.parseInt(st.nextToken())];
         for (int i = 0; i < descriptor.length; i++) {
             if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+                throw new IndexOutOfBoundsException(
+                        "Too few numbers in string representation.");
             descriptor[i] = Integer.parseInt(st.nextToken());
         }
     }
 
-	@Override
-	public MemeFeature averageFeature(MemeFeature feature) {
-		//TODO: am I looking at the right kind of object?
-		if (feature == null) {
-			throw new UnsupportedOperationException("cannot merge with null feature");
-		}
-		OpponentHistogram averageHistogram = new OpponentHistogram();
-		double[] clusterSmash = new double[this.getDoubleHistogram().length];
-		for (int i = 0; i < this.getDoubleHistogram().length; i++) {
-			clusterSmash[i] = (this.getDoubleHistogram()[i] + feature.getDoubleHistogram()[i]) / 2;
-		}
-		averageHistogram.setDoubleHistogram(clusterSmash);
-		return averageHistogram;
-	}
+    @Override
+    public MemeFeature averageFeature(MemeFeature feature) {
+        // TODO: am I looking at the right kind of object?
+        if (feature == null) {
+            throw new UnsupportedOperationException(
+                    "cannot merge with null feature");
+        }
+        OpponentHistogram averageHistogram = new OpponentHistogram();
+        double[] clusterSmash = new double[this.getDoubleHistogram().length];
+        for (int i = 0; i < this.getDoubleHistogram().length; i++) {
+            clusterSmash[i] = (this.getDoubleHistogram()[i] + feature
+                    .getDoubleHistogram()[i]) / 2;
+        }
+        averageHistogram.setDoubleHistogram(clusterSmash);
+        return averageHistogram;
+    }
 }
