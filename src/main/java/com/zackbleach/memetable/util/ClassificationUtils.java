@@ -19,6 +19,9 @@ import com.zackbleach.memetable.imagerecognition.Searcher;
 @Component
 public class ClassificationUtils {
 
+    @Autowired
+    MemeCache memeCache;
+
     private static final Logger log = Logger
             .getLogger(ClassificationUtils.class);
 
@@ -59,7 +62,7 @@ public class ClassificationUtils {
     public Result classify(String path) {
         Result r = null;
         try {
-            r = MemeCache.getInstance().getCache().get(path);
+            r = memeCache.getCache().get(path);
         } catch (ExecutionException e) {
             log.error("Failed to classify meme from path: " + path);
             e.printStackTrace();

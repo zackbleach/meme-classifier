@@ -59,7 +59,8 @@ public class ClusterPair implements Comparable<ClusterPair> {
     }
 
     private Cluster setClusterName(Cluster left, Cluster right, Cluster cluster) {
-        if (StringUtils.isBlank(left.getName()) && StringUtils.isBlank(right.getName()))  {
+        if (StringUtils.isBlank(left.getName())
+                && StringUtils.isBlank(right.getName())) {
             return cluster;
         }
         if (StringUtils.isBlank(left.getName())) {

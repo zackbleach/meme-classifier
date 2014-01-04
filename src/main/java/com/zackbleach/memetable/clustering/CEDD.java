@@ -8,11 +8,12 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
- * The CEDD feature was created, implemented and provided by Savvas A. Chatzichristofis<br/>
- * More information can be found in: Savvas A. Chatzichristofis and Yiannis S. Boutalis,
- * <i>CEDD: Color and Edge Directivity Descriptor. A Compact
- * Descriptor for Image Indexing and Retrieval</i>, A. Gasteratos, M. Vincze, and J.K.
- * Tsotsos (Eds.): ICVS 2008, LNCS 5008, pp. 312-322, 2008.
+ * The CEDD feature was created, implemented and provided by Savvas A.
+ * Chatzichristofis<br/>
+ * More information can be found in: Savvas A. Chatzichristofis and Yiannis S.
+ * Boutalis, <i>CEDD: Color and Edge Directivity Descriptor. A Compact
+ * Descriptor for Image Indexing and Retrieval</i>, A. Gasteratos, M. Vincze,
+ * and J.K. Tsotsos (Eds.): ICVS 2008, LNCS 5008, pp. 312-322, 2008.
  *
  * @author: Savvas A. Chatzichristofis, savvash@gmail.com
  */
@@ -29,8 +30,8 @@ public class CEDD implements MemeFeature {
     private CEDD tmpFeature;
     private double iTmp1, iTmp2;
 
-
-    public CEDD(double Th0, double Th1, double Th2, double Th3, boolean CompactDescriptor) {
+    public CEDD(double Th0, double Th1, double Th2, double Th3,
+            boolean CompactDescriptor) {
         this.T0 = Th0;
         this.T1 = Th1;
         this.T2 = Th2;
@@ -60,7 +61,6 @@ public class CEDD implements MemeFeature {
         int width = image.getWidth();
         int height = image.getHeight();
 
-
         double[][] ImageGrid = new double[width][height];
         double[][] PixelCount = new double[2][2];
         int[][] ImageGridRed = new int[width][height];
@@ -77,8 +77,10 @@ public class CEDD implements MemeFeature {
             Step_Y = Step_Y - 1;
         }
 
-        if (Step_Y < 2) Step_Y = 2;
-        if (Step_X < 2) Step_X = 2;
+        if (Step_Y < 2)
+            Step_Y = 2;
+        if (Step_X < 2)
+            Step_X = 2;
 
         int[] Edges = new int[6];
 
@@ -95,11 +97,11 @@ public class CEDD implements MemeFeature {
                 ImageGridRed[x][y] = (pixel >> 16) & 0xff;
                 ImageGridGreen[x][y] = (pixel >> 8) & 0xff;
                 ImageGridBlue[x][y] = (pixel) & 0xff;
-                int mean = (int) (0.114 * ImageGridBlue[x][y] + 0.587 * ImageGridGreen[x][y] + 0.299 * ImageGridRed[x][y]);
+                int mean = (int) (0.114 * ImageGridBlue[x][y] + 0.587
+                        * ImageGridGreen[x][y] + 0.299 * ImageGridRed[x][y]);
                 ImageGrid[x][y] = mean;
             }
         }
-
 
         int[] CororRed = new int[Step_Y * Step_X];
         int[] CororGreen = new int[Step_Y * Step_X];
@@ -113,7 +115,6 @@ public class CEDD implements MemeFeature {
 
         for (int y = 0; y < height - Step_Y; y += Step_Y) {
             for (int x = 0; x < width - Step_X; x += Step_X) {
-
 
                 MeanRed = 0;
                 MeanGreen = 0;
@@ -151,23 +152,45 @@ public class CEDD implements MemeFeature {
                         TempSum++;
 
                         if (j < (x + Step_X / 2) && i < (y + Step_Y / 2))
-                            PixelsNeighborhood.Area1 += 4 * ImageGrid[j][i] / (Step_X * Step_Y);
+                            PixelsNeighborhood.Area1 += 4 * ImageGrid[j][i]
+                                    / (Step_X * Step_Y);
                         if (j >= (x + Step_X / 2) && i < (y + Step_Y / 2))
-                            PixelsNeighborhood.Area2 += 4 * ImageGrid[j][i] / (Step_X * Step_Y);
+                            PixelsNeighborhood.Area2 += 4 * ImageGrid[j][i]
+                                    / (Step_X * Step_Y);
                         if (j < (x + Step_X / 2) && i >= (y + Step_Y / 2))
-                            PixelsNeighborhood.Area3 += 4 * ImageGrid[j][i] / (Step_X * Step_Y);
+                            PixelsNeighborhood.Area3 += 4 * ImageGrid[j][i]
+                                    / (Step_X * Step_Y);
                         if (j >= (x + Step_X / 2) && i >= (y + Step_Y / 2))
-                            PixelsNeighborhood.Area4 += 4 * ImageGrid[j][i] / (Step_X * Step_Y);
+                            PixelsNeighborhood.Area4 += 4 * ImageGrid[j][i]
+                                    / (Step_X * Step_Y);
                     }
                 }
 
-                MaskValues.Mask1 = Math.abs(PixelsNeighborhood.Area1 * 2 + PixelsNeighborhood.Area2 * -2 + PixelsNeighborhood.Area3 * -2 + PixelsNeighborhood.Area4 * 2);
-                MaskValues.Mask2 = Math.abs(PixelsNeighborhood.Area1 * 1 + PixelsNeighborhood.Area2 * 1 + PixelsNeighborhood.Area3 * -1 + PixelsNeighborhood.Area4 * -1);
-                MaskValues.Mask3 = Math.abs(PixelsNeighborhood.Area1 * 1 + PixelsNeighborhood.Area2 * -1 + PixelsNeighborhood.Area3 * 1 + PixelsNeighborhood.Area4 * -1);
-                MaskValues.Mask4 = Math.abs(PixelsNeighborhood.Area1 * Math.sqrt(2) + PixelsNeighborhood.Area2 * 0 + PixelsNeighborhood.Area3 * 0 + PixelsNeighborhood.Area4 * -Math.sqrt(2));
-                MaskValues.Mask5 = Math.abs(PixelsNeighborhood.Area1 * 0 + PixelsNeighborhood.Area2 * Math.sqrt(2) + PixelsNeighborhood.Area3 * -Math.sqrt(2) + PixelsNeighborhood.Area4 * 0);
+                MaskValues.Mask1 = Math.abs(PixelsNeighborhood.Area1 * 2
+                        + PixelsNeighborhood.Area2 * -2
+                        + PixelsNeighborhood.Area3 * -2
+                        + PixelsNeighborhood.Area4 * 2);
+                MaskValues.Mask2 = Math.abs(PixelsNeighborhood.Area1 * 1
+                        + PixelsNeighborhood.Area2 * 1
+                        + PixelsNeighborhood.Area3 * -1
+                        + PixelsNeighborhood.Area4 * -1);
+                MaskValues.Mask3 = Math.abs(PixelsNeighborhood.Area1 * 1
+                        + PixelsNeighborhood.Area2 * -1
+                        + PixelsNeighborhood.Area3 * 1
+                        + PixelsNeighborhood.Area4 * -1);
+                MaskValues.Mask4 = Math.abs(PixelsNeighborhood.Area1
+                        * Math.sqrt(2) + PixelsNeighborhood.Area2 * 0
+                        + PixelsNeighborhood.Area3 * 0
+                        + PixelsNeighborhood.Area4 * -Math.sqrt(2));
+                MaskValues.Mask5 = Math.abs(PixelsNeighborhood.Area1 * 0
+                        + PixelsNeighborhood.Area2 * Math.sqrt(2)
+                        + PixelsNeighborhood.Area3 * -Math.sqrt(2)
+                        + PixelsNeighborhood.Area4 * 0);
 
-                double Max = Math.max(MaskValues.Mask1, Math.max(MaskValues.Mask2, Math.max(MaskValues.Mask3, Math.max(MaskValues.Mask4, MaskValues.Mask5))));
+                double Max = Math.max(MaskValues.Mask1, Math.max(
+                        MaskValues.Mask2,
+                        Math.max(MaskValues.Mask3,
+                                Math.max(MaskValues.Mask4, MaskValues.Mask5))));
 
                 MaskValues.Mask1 = MaskValues.Mask1 / Max;
                 MaskValues.Mask2 = MaskValues.Mask2 / Max;
@@ -219,19 +242,24 @@ public class CEDD implements MemeFeature {
                 HSV = HSVConverter.ApplyFilter(MeanRed, MeanGreen, MeanBlue);
 
                 if (this.Compact == false) {
-                    Fuzzy10BinResultTable = Fuzzy10.ApplyFilter(HSV[0], HSV[1], HSV[2], 2);
-                    Fuzzy24BinResultTable = Fuzzy24.ApplyFilter(HSV[0], HSV[1], HSV[2], Fuzzy10BinResultTable, 2);
+                    Fuzzy10BinResultTable = Fuzzy10.ApplyFilter(HSV[0], HSV[1],
+                            HSV[2], 2);
+                    Fuzzy24BinResultTable = Fuzzy24.ApplyFilter(HSV[0], HSV[1],
+                            HSV[2], Fuzzy10BinResultTable, 2);
 
                     for (int i = 0; i <= T; i++) {
                         for (int j = 0; j < 24; j++) {
-                            if (Fuzzy24BinResultTable[j] > 0) CEDD[24 * Edges[i] + j] += Fuzzy24BinResultTable[j];
+                            if (Fuzzy24BinResultTable[j] > 0)
+                                CEDD[24 * Edges[i] + j] += Fuzzy24BinResultTable[j];
                         }
                     }
                 } else {
-                    Fuzzy10BinResultTable = Fuzzy10.ApplyFilter(HSV[0], HSV[1], HSV[2], 2);
+                    Fuzzy10BinResultTable = Fuzzy10.ApplyFilter(HSV[0], HSV[1],
+                            HSV[2], 2);
                     for (int i = 0; i <= T; i++) {
                         for (int j = 0; j < 10; j++) {
-                            if (Fuzzy10BinResultTable[j] > 0) CEDD[10 * Edges[i] + j] += Fuzzy10BinResultTable[j];
+                            if (Fuzzy10BinResultTable[j] > 0)
+                                CEDD[10 * Edges[i] + j] += Fuzzy10BinResultTable[j];
                         }
                     }
                 }
@@ -249,7 +277,6 @@ public class CEDD implements MemeFeature {
 
         double qCEDD[];
 
-
         if (Compact == false) {
             qCEDD = new double[144];
             CEDDQuant quants = new CEDDQuant();
@@ -260,10 +287,10 @@ public class CEDD implements MemeFeature {
             qCEDD = quants.Apply(CEDD);
         }
 
-//        for (int i = 0; i < qCEDD.length; i++)
-//            System.out.println(qCEDD[i]);
+        // for (int i = 0; i < qCEDD.length; i++)
+        // System.out.println(qCEDD[i]);
 
-        data = qCEDD;  // changed by mlux
+        data = qCEDD; // changed by mlux
 
     }
 
@@ -277,7 +304,8 @@ public class CEDD implements MemeFeature {
 
         // check if parameters are fitting ...
         if ((tmpFeature.data.length != data.length))
-            throw new UnsupportedOperationException("Histogram lengths or color spaces do not match");
+            throw new UnsupportedOperationException(
+                    "Histogram lengths or color spaces do not match");
 
         // Init Tanimoto coefficient
         Result = 0;
@@ -292,8 +320,10 @@ public class CEDD implements MemeFeature {
             Temp2 += data[i];
         }
 
-        if (Temp1 == 0 && Temp2 == 0) return 0f;
-        if (Temp1 == 0 || Temp2 == 0) return 100f;
+        if (Temp1 == 0 && Temp2 == 0)
+            return 0f;
+        if (Temp1 == 0 || Temp2 == 0)
+            return 100f;
 
         for (int i = 0; i < tmpFeature.data.length; i++) {
             iTmp1 = tmpFeature.data[i] / Temp1;
@@ -333,11 +363,13 @@ public class CEDD implements MemeFeature {
     public void setStringRepresentation(String s) { // added by mlux
         StringTokenizer st = new StringTokenizer(s);
         if (!st.nextToken().equals("cedd"))
-            throw new UnsupportedOperationException("This is not a CEDD descriptor.");
+            throw new UnsupportedOperationException(
+                    "This is not a CEDD descriptor.");
         data = new double[Integer.parseInt(st.nextToken())];
         for (int i = 0; i < data.length; i++) {
             if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+                throw new IndexOutOfBoundsException(
+                        "Too few numbers in string representation.");
             data[i] = Integer.parseInt(st.nextToken());
         }
 
@@ -354,15 +386,20 @@ public class CEDD implements MemeFeature {
         int position = -1;
         for (int i = 0; i < data.length; i++) {
             if (position == -1) {
-                if (data[i] == 0) position = i;
+                if (data[i] == 0)
+                    position = i;
             } else if (position > -1) {
-                if (data[i] != 0) position = -1;
+                if (data[i] != 0)
+                    position = -1;
             }
         }
-        if (position<0) position = 143;
-        // find out the actual length. two values in one byte, so we have to round up.
+        if (position < 0)
+            position = 143;
+        // find out the actual length. two values in one byte, so we have to
+        // round up.
         int length = (position + 1) / 2;
-        if ((position + 1) % 2 == 1) length = position / 2 + 1;
+        if ((position + 1) % 2 == 1)
+            length = position / 2 + 1;
         byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
             tmp = ((int) (data[(i << 1)])) << 4;
@@ -373,13 +410,16 @@ public class CEDD implements MemeFeature {
     }
 
     /**
-     * Reads descriptor from a byte array. Much faster than the String based method.
+     * Reads descriptor from a byte array. Much faster than the String based
+     * method.
      *
-     * @param in byte array from corresponding method
+     * @param in
+     *            byte array from corresponding method
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        if ((in.length << 1) < data.length) Arrays.fill(data, in.length << 1, data.length - 1, 0);
+        if ((in.length << 1) < data.length)
+            Arrays.fill(data, in.length << 1, data.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i] + 128;
             data[(i << 1) + 1] = ((double) (tmp & 0x000F));
@@ -388,7 +428,8 @@ public class CEDD implements MemeFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if ((length << 1) < data.length) Arrays.fill(data, length << 1, data.length - 1, 0);
+        if ((length << 1) < data.length)
+            Arrays.fill(data, length << 1, data.length - 1, 0);
         for (int i = offset; i < offset + length; i++) {
             tmp = in[i] + 128;
             data[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F));
@@ -399,19 +440,21 @@ public class CEDD implements MemeFeature {
     public double[] getDoubleHistogram() {
         return data;
     }
+
     private void setDoubleHistogram(double[] data) {
-    	this.data = data;
+        this.data = data;
     }
 
-	@Override
-	public MemeFeature averageFeature(MemeFeature feature) {
-		//TODO: am I looking at the right kind of object?
-		CEDD averageHistogram = new CEDD();
-		double[] clusterSmash = new double[144];
-		for (int i = 0; i < this.getDoubleHistogram().length; i++) {
-			clusterSmash[i] = (this.getDoubleHistogram()[i] + feature.getDoubleHistogram()[i]) / 2;
-		}
-		averageHistogram.setDoubleHistogram(clusterSmash);
-		return averageHistogram;
-	}
+    @Override
+    public MemeFeature averageFeature(MemeFeature feature) {
+        // TODO: am I looking at the right kind of object?
+        CEDD averageHistogram = new CEDD();
+        double[] clusterSmash = new double[144];
+        for (int i = 0; i < this.getDoubleHistogram().length; i++) {
+            clusterSmash[i] = (this.getDoubleHistogram()[i] + feature
+                    .getDoubleHistogram()[i]) / 2;
+        }
+        averageHistogram.setDoubleHistogram(clusterSmash);
+        return averageHistogram;
+    }
 }

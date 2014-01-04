@@ -1,7 +1,7 @@
 package com.zackbleach.memetable.clustering;
 
 public class Cluster {
-//TODO: merge instance?
+
     private String name = "unknown";
     private MemeFeature feature;
     private Cluster parent;

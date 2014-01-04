@@ -25,51 +25,55 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 
 public class RedditScraper implements Scraper {
-	
-	private static final Logger log = Logger.getLogger(MemeExtractor.class);
-	private static final String ADVICE_ANIMALS = "http://www.reddit.com/r/adviceanimals.json";
-	
-	public RedditScraper() {
-	}
 
-	/* (non-Javadoc)
-	 * @see com.zackbleach.memetable.scraper.Scraper#scrape()
-	 */
-	@Override
-	public List<Post> scrape() throws JsonParseException, JsonMappingException, IOException {
-           String json = getPage();
-           ObjectMapper mapper = new ObjectMapper();
-           JsonNode rootNode = mapper.readValue(json, JsonNode.class);
-           JsonNode data = rootNode.get("data");
-           JsonNode children = data.get("children");
-           List<Post> posts = new ArrayList<Post>();
-           for (JsonNode n : children) {
-        	   JsonNode submission = n.get("data");
-        	   String url = submission.get("url").asText();
-        	   int score = submission.get("score").asInt();
-        	   posts.add(new Post(url, score));
-        	   log.info("Found URL: "+url);
-           }
-           return posts;
-   }
-   
-   private String getPage() throws IOException {
-	   URL url = new URL(ADVICE_ANIMALS);
-	   URLConnection con = url.openConnection();
-	   Pattern p = Pattern.compile("text/html;\\s+charset=([^\\s]+)\\s*");
-	   Matcher m = p.matcher(con.getContentType());
-	   /* If Content-Type doesn't match choose default and 
-	    * hope for the best. */
-	   String charset = m.matches() ? m.group(1) : "ISO-8859-1";
-	   Reader r = new InputStreamReader(con.getInputStream(), charset);
-	   StringBuilder buf = new StringBuilder();
-	   while (true) {
-	     int ch = r.read();
-	     if (ch < 0)
-	       break;
-	     buf.append((char) ch);
-	   }
-	   String str = buf.toString();
-	   return str;
-   }
+    private static final Logger log = Logger.getLogger(MemeExtractor.class);
+    private static final String ADVICE_ANIMALS = "http://www.reddit.com/r/adviceanimals.json";
+
+    public RedditScraper() {
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.zackbleach.memetable.scraper.Scraper#scrape()
+     */
+    @Override
+    public List<Post> scrape() throws JsonParseException, JsonMappingException,
+            IOException {
+        String json = getPage();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readValue(json, JsonNode.class);
+        JsonNode data = rootNode.get("data");
+        JsonNode children = data.get("children");
+        List<Post> posts = new ArrayList<Post>();
+        for (JsonNode n : children) {
+            JsonNode submission = n.get("data");
+            String url = submission.get("url").asText();
+            int score = submission.get("score").asInt();
+            posts.add(new Post(url, score));
+            log.info("Found URL: " + url);
+        }
+        return posts;
+    }
+
+    private String getPage() throws IOException {
+        URL url = new URL(ADVICE_ANIMALS);
+        URLConnection con = url.openConnection();
+        Pattern p = Pattern.compile("text/html;\\s+charset=([^\\s]+)\\s*");
+        Matcher m = p.matcher(con.getContentType());
+        /*
+         * If Content-Type doesn't match choose default and hope for the best.
+         */
+        String charset = m.matches() ? m.group(1) : "ISO-8859-1";
+        Reader r = new InputStreamReader(con.getInputStream(), charset);
+        StringBuilder buf = new StringBuilder();
+        while (true) {
+            int ch = r.read();
+            if (ch < 0)
+                break;
+            buf.append((char) ch);
+        }
+        String str = buf.toString();
+        return str;
+    }
 }

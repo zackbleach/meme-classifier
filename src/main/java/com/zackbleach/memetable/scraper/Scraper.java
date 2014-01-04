@@ -8,8 +8,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 public interface Scraper {
 
-	//TODO: comment
-	public abstract List<Post> scrape() throws JsonParseException,
-			JsonMappingException, IOException;
+    /**
+     * Grabs content we're interested in from defined URL
+     */
+    public abstract List<Post> scrape() throws JsonParseException,
+            JsonMappingException, IOException;
 
 }

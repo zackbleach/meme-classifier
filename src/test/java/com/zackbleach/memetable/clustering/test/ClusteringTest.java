@@ -1,5 +1,7 @@
 package com.zackbleach.memetable.clustering.test;
 
+import static com.zackbleach.memetable.util.ImageUtils.readImagesFromFolder;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -11,7 +13,18 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.junit.Test;
 
+import weka.clusterers.Cobweb;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
+
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.AddID;
+
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.collect.ImmutableList;
 import com.zackbleach.memetable.clustering.CEDD;
 import com.zackbleach.memetable.clustering.Cluster;
 import com.zackbleach.memetable.clustering.HierarchyBuilder;
@@ -88,5 +101,50 @@ public class ClusteringTest {
             clusters.add(cluster);
         }
         return clusters;
+    }
+
+    @Test
+    /**
+    * WEKA IS SHIT!
+    */
+    public void wekaTest() throws Exception {
+        List<BufferedImage> images;
+        try {
+            images = readImagesFromFolder("TestCluster/");
+            List<double[]> histograms = new ArrayList<double[]>();
+            for (BufferedImage image : images) {
+                OpponentHistogram oh = new OpponentHistogram();
+                oh.extract(image);
+                histograms.add(oh.getDoubleHistogram());
+            }
+
+            ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+            for (int i = 0; i < 64; i++) {
+                Attribute attr = new Attribute("bin" + i);
+                attributes.add(attr);
+            }
+            attributes.add(new Attribute("name"));
+
+            Instances dataset = new Instances("meme_dataset", attributes, 0);
+            Instance example = new DenseInstance(65);
+            for (double[] histogram : histograms) {
+                for (int i = 0; i < attributes.size() - 1; i++) {
+                    example.setValue(attributes.get(i), histogram[i]);
+                }
+                example.setValue(attributes.get(attributes.size()-1), 1234);
+                dataset.add(example);
+            }
+
+            // train Cobweb
+            Cobweb cw = new Cobweb();
+            cw.buildClusterer(dataset);
+            for (Instance i : dataset) {
+                cw.updateClusterer(i);
+            }
+            cw.updateFinished();
+            log.warn(cw);
+        } catch (IOException e) {
+            log.error("Failed to load test memes");
+        }
     }
 }
