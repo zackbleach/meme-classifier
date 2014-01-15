@@ -1,5 +1,5 @@
-package com.zackbleach.memetable.clustering;
 
+package com.zackbleach.memetable.clustering;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;

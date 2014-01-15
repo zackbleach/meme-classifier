@@ -1,4 +1,4 @@
-package com.zackbleach.memetable.scraper;
+package com.zackbleach.memetable.bucket;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -30,7 +30,7 @@ public class QuickMemeScraper {
         try {
             //Connect to the website and get the html
             Document doc = Jsoup.connect(webSiteURL).get();
-            //Get all elements with img tag ,
+            //Get all elements with img tag
             Elements img = doc.getElementsByTag("img");
             for (Element el : img) {
                 //for each element get the srs url
@@ -39,9 +39,7 @@ public class QuickMemeScraper {
                 log.warn("Image Found!");
                 log.warn("src attribute is : "+src);
                 getImages(src, name);
-
             }
-
         } catch (IOException ex) {
             log.warn("Unable to download meme, " + ex);
         }

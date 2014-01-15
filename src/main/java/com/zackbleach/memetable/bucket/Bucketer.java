@@ -21,7 +21,6 @@ public class Bucketer{
    Set<Bucket> buckets = new HashSet<Bucket>();
 
     public Bucketer() {
-
     }
 
     public Set<Bucket> getBuckets() {
