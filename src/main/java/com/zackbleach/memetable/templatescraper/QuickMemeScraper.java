@@ -1,4 +1,4 @@
-package com.zackbleach.memetable.bucket;
+package com.zackbleach.memetable.templatescraper;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -20,10 +20,8 @@ public class QuickMemeScraper {
         LogFactory.getLog(QuickMemeScraper.class);
 
 
-    //The url of the website. This is just an example
     private static final String webSiteURL = "http://www.quickmeme.com/caption";
 
-    //The path of the folder that you want to save the images to
     private static final String folderPath = "DownloadedTemplates/";
 
     public static void scrape() {

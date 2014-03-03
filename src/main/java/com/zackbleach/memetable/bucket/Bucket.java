@@ -7,10 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import javax.persistence.Transient;
 
-import com.zackbleach.memetable.clustering.MemeFeature;
+import com.zackbleach.memetable.classification.featureextraction.MemeFeature;
 
 /**
  * Represents a bucket which an instance of a meme can be put in to A bucket is

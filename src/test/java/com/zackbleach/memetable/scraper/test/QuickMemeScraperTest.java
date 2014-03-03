@@ -2,7 +2,7 @@ package com.zackbleach.memetable.scraper.test;
 
 import org.junit.Test;
 
-import com.zackbleach.memetable.bucket.QuickMemeScraper;
+import com.zackbleach.memetable.templatescraper.QuickMemeScraper;
 
 public class QuickMemeScraperTest {
 

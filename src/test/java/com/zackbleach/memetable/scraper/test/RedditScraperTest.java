@@ -5,9 +5,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.zackbleach.memetable.scraper.Post;
-import com.zackbleach.memetable.scraper.RedditScraper;
-import com.zackbleach.memetable.scraper.Scraper;
+import com.zackbleach.memetable.redditscraper.Post;
+import com.zackbleach.memetable.redditscraper.RedditScraper;
+import com.zackbleach.memetable.redditscraper.Scraper;
 
 public class RedditScraperTest {
 

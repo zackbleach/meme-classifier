@@ -1,4 +1,4 @@
-package com.zackbleach.memetable.clustering;
+package com.zackbleach.memetable.classification.featureextraction;
 
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;

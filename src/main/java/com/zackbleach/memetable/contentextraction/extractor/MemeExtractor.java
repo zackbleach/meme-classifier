@@ -1,15 +1,12 @@
 package com.zackbleach.memetable.contentextraction.extractor;
 
 import java.awt.image.BufferedImage;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -19,14 +16,11 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zackbleach.memetable.cache.MemeCache;
 import com.zackbleach.memetable.contentextraction.Site;
 import com.zackbleach.memetable.contentextraction.entity.ExtractedEntity;
 import com.zackbleach.memetable.contentextraction.entity.ExtractedMeme;
-import com.zackbleach.memetable.imagerecognition.Result;
 import com.zackbleach.memetable.util.ImageUtils;
 import com.zackbleach.memetable.util.URLUtils;
 

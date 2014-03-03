@@ -1,4 +1,4 @@
-package com.zackbleach.memetable.scraper;
+package com.zackbleach.memetable.redditscraper;
 
 public class Post {
 

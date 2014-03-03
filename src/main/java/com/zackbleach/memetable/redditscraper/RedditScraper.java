@@ -1,4 +1,4 @@
-package com.zackbleach.memetable.scraper;
+package com.zackbleach.memetable.redditscraper;
 
 import java.io.IOException;
 import java.io.InputStream;
