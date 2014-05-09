@@ -39,13 +39,12 @@ public class Bucketer {
     private Set<Bucket> buckets = new HashSet<Bucket>();
 
     private static final int ONE_HOUR = 3600000;
-    private static final int FIVE_MINUTES = 300000;
 
     public Bucketer() {
     }
 
     @PostConstruct
-    @Scheduled(initialDelay=FIVE_MINUTES, fixedDelay=FIVE_MINUTES)
+    @Scheduled(initialDelay=ONE_HOUR*12, fixedDelay=ONE_HOUR*12)
     private void createBuckets() {
         List<Template> templates = quickMemeScraper.scrape();
         for (Template template : templates) {
