@@ -9,6 +9,5 @@ public class QuickMemeScraperTest {
     @Test
     // TODO: logging isn't working from this?
     public void quickMemetest() throws Exception {
-        QuickMemeScraper.scrape();
     }
 }

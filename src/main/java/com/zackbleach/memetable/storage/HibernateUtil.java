@@ -1,10 +1,9 @@
 package com.zackbleach.memetable.storage;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 
-import com.zackbleach.memetable.bucket.Bucket;
+import com.zackbleach.memetable.classification.bucketer.Bucket;
 
 public class HibernateUtil {
 

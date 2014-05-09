@@ -1,61 +1,59 @@
 package com.zackbleach.memetable.templatescraper;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
+import java.awt.Image;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Level;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
 
+@Component
 public class QuickMemeScraper {
-    private static final Log log =
-        LogFactory.getLog(QuickMemeScraper.class);
+    private static final Log log = LogFactory.getLog(QuickMemeScraper.class);
 
+    private final static String quickMemeUrl = "http://www.quickmeme.com/caption";
 
-    private static final String webSiteURL = "http://www.quickmeme.com/caption";
-
-    private static final String folderPath = "DownloadedTemplates/";
-
-    public static void scrape() {
+    public List<Template> scrape() {
+        List<Template> templates = new ArrayList<Template>();
         try {
-            //Connect to the website and get the html
-            Document doc = Jsoup.connect(webSiteURL).get();
-            //Get all elements with img tag
+            // Connect to the website and get the html
+            Document doc = Jsoup.connect(quickMemeUrl).get();
+            // Get all elements with img tag
             Elements img = doc.getElementsByTag("img");
             for (Element el : img) {
-                //for each element get the srs url
+                // for each element get the src url
                 String src = el.absUrl("src");
                 String name = el.attr("title");
-                log.warn("Image Found!");
-                log.warn("src attribute is : "+src);
-                getImages(src, name);
+                log.info("Found image at : " + src + " \n name is: " + name);
+                // create template
+                Template template = getTemplate(src, name);
+                templates.add(template);
             }
         } catch (IOException ex) {
             log.warn("Unable to download meme, " + ex);
         }
+        return templates;
     }
 
-    private static void getImages(String src, String name) throws IOException {
-        log.warn("Found an image" + name);
+    private Template getTemplate(String src, String name) throws IOException {
+        Template template = new Template();
+        template.setImage(getImageFromUrl(src));
+        template.setName(name);
+        return template;
+    }
 
-        //Open a URL Stream
-        URL url = new URL(src);
-        InputStream in = url.openStream();
-
-        OutputStream out = new BufferedOutputStream(new FileOutputStream( folderPath+ name));
-
-        for (int b; (b = in.read()) != -1;) {
-            out.write(b);
-        }
-        out.close();
-        in.close();
+    private Image getImageFromUrl(String url) throws IOException {
+        URL imageUrl = new URL(url);
+        Image image = ImageIO.read(imageUrl);
+        return image;
     }
 }

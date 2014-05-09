@@ -8,7 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
-import com.zackbleach.memetable.bucket.Bucket;
+import com.zackbleach.memetable.classification.bucketer.Bucket;
 
 @Repository
 public class BucketDAO {
