@@ -44,15 +44,15 @@ public class TopMemeController {
         return new ResponseEntity<Classification>(classification, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResponseEntity<Collection<String>> getMemeNames()
-            throws IOException, JsonParseException, JsonMappingException {
-            Collection<String> memeNames = new TreeSet<String>();
-            for (Bucket bucket : bucketer.getBuckets()) {
-                String prettyName = (WordUtils.capitalize(bucket.getName()));
-                memeNames.add(prettyName);
-            }
-        return new ResponseEntity<Collection<String>>(memeNames, HttpStatus.OK);
-    }
-
+//    @RequestMapping(value = "/list", method = RequestMethod.GET)
+//    public ResponseEntity<Collection<String>> getMemeNames()
+//            throws IOException, JsonParseException, JsonMappingException {
+//            Collection<String> memeNames = new TreeSet<String>();
+//            for (Bucket bucket : bucketer.getBuckets()) {
+//                String prettyName = (WordUtils.capitalize(bucket.getName()));
+//                memeNames.add(prettyName);
+//            }
+//        return new ResponseEntity<Collection<String>>(memeNames, HttpStatus.OK);
+//    }
+//
 }
