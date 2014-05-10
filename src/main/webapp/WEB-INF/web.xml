@@ -21,6 +21,10 @@
     <filter-name>cross-origin</filter-name>
         <filter-class>org.eclipse.jetty.servlets.CrossOriginFilter</filter-class>
     </filter>
+    <init-param>
+        <param-name>allowedOrigins</param-name>
+        <param-value>*</param-value>
+    </init-param>
     <filter-mapping>
         <filter-name>cross-origin</filter-name>
         <url-pattern>/*</url-pattern>
