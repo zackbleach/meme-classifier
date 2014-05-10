@@ -16,7 +16,7 @@ import com.zackbleach.memetable.classification.classifier.Classification;
 import com.zackbleach.memetable.classification.classifier.Classifier;
 
 @Controller
-@RequestMapping("api/meme")
+@RequestMapping("/meme")
 public class TopMemeController {
 
     private final Logger log = Logger.getLogger(TopMemeController.class);
