@@ -457,4 +457,16 @@ public class CEDD implements MemeFeature {
         averageHistogram.setDoubleHistogram(clusterSmash);
         return averageHistogram;
     }
+
+    @Override
+    public String getFeatureName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getFieldName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
