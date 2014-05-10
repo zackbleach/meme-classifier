@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>com.mangofactory</groupId>
 			<artifactId>swagger-springmvc</artifactId>
-			<version>0.5.0-SNAPSHOT</version>
+			<version>0.5.0</version>
 		</dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -139,12 +139,7 @@
 		<artifactId>lucene-queryparser</artifactId>
 		<version>4.0.0</version>
 	</dependency>
-	<dependency>
-		<groupId>opensurf</groupId>
-		<artifactId>opensurf</artifactId>
-		<version>1</version>
-	</dependency>
-	<dependency>
+    <dependency>
 		<groupId>com.googlecode.json-simple</groupId>
 		<artifactId>json-simple</artifactId>
 		<version>1.1</version>
