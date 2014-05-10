@@ -2,6 +2,7 @@ package com.zackbleach.memetable.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -46,6 +47,7 @@ public class TopMemeController {
             for (Bucket bucket : bucketer.getBuckets()) {
                 memeNames.add(bucket.getName());
             }
+            Collections.sort(memeNames);
         return new ResponseEntity<List<String>>(memeNames, HttpStatus.OK);
     }
 
