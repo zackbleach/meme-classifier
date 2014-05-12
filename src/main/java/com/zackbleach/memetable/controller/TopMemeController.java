@@ -1,11 +1,7 @@
 package com.zackbleach.memetable.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.WordUtils;
@@ -44,15 +40,15 @@ public class TopMemeController {
         return new ResponseEntity<Classification>(classification, HttpStatus.OK);
     }
 
-//    @RequestMapping(value = "/list", method = RequestMethod.GET)
-//    public ResponseEntity<Collection<String>> getMemeNames()
-//            throws IOException, JsonParseException, JsonMappingException {
-//            Collection<String> memeNames = new TreeSet<String>();
-//            for (Bucket bucket : bucketer.getBuckets()) {
-//                String prettyName = (WordUtils.capitalize(bucket.getName()));
-//                memeNames.add(prettyName);
-//            }
-//        return new ResponseEntity<Collection<String>>(memeNames, HttpStatus.OK);
-//    }
-//
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ResponseEntity<Set<String>> getMemeNames()
+            throws IOException, JsonParseException, JsonMappingException {
+            Set<String> memeNames = new TreeSet<String>();
+            for (Bucket bucket : bucketer.getBuckets()) {
+                String prettyName = (WordUtils.capitalize(bucket.getName()));
+                memeNames.add(prettyName);
+            }
+        return new ResponseEntity<Set<String>>(memeNames, HttpStatus.OK);
+    }
+
 }
