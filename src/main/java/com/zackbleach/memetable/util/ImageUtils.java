@@ -1,89 +1,32 @@
 package com.zackbleach.memetable.util;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableList;
-import com.zackbleach.memetable.contentextraction.extractor.Extractor;
-import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 
+@Component
 public class ImageUtils {
 
-    private static final Logger log = Logger.getLogger(ImageUtils.class);
-
-    public static BufferedImage getImageFromSite(String path)
-            throws IOException, URISyntaxException {
-        Extractor ext = new MemeExtractor();
-        return ext.extractEntity(path).getImage();
+    public Image getImageFromUrl(String url) throws IOException {
+        URL imageUrl = new URL(url);
+        Image image = ImageIO.read(imageUrl);
+        return image;
     }
 
-    public static boolean saveImage(String path, String folder) {
-        Extractor ext = new MemeExtractor();
-        try {
-            saveImage(ext.extractEntity(path).getImage(), path, folder);
-        } catch (IOException ioe) {
-            log.warn("Problem saving image: " + path, ioe);
-        } catch (URISyntaxException urie) {
-            log.warn("Problem saving image: " + path, urie);
-        }
-        return false;
-    }
-
-    public static boolean saveImage(BufferedImage image, String path,
-            String folder) {
-        if (image == null) {
-            return false;
-        }
-        try {
-            String[] parts = path.split("/");
-            File file = new File(folder + parts[parts.length - 1]);
-            if (!file.exists()) {
-                ImageIO.write(image, "jpg", file);
-                log.warn("Saved file to disk: " + file.getName());
-                return true;
-            } else {
-                // already saved
-                return true;
-            }
-        } catch (IOException ioe) {
-            log.warn("Problem saving image: " + path, ioe);
-        }
-        return false;
-    }
-
-    public static List<BufferedImage> readImagesFromFolder(String path)
-            throws IOException {
-        List<BufferedImage> images = new ArrayList<BufferedImage>();
-        log.info("Reading images from: " + path);
-        File folder = new File(path);
-        if (folder.listFiles() == null) {
-            return images;
-        }
-        for (File file : folder.listFiles()) {
-            if (file.isDirectory()) {
-                readImagesFromFolder(file.getAbsolutePath());
-            } else if (!file.isHidden()) {
-                images.add(ImageIO.read(file));
-            }
-        }
-        return images;
-    }
-
-    public static List<BufferedImage> scale(BufferedImage image1,
+    public List<BufferedImage> scale(BufferedImage image1,
             BufferedImage image2) {
         int height = 0;
         if (image1.getHeight() > image2.getHeight()) {
@@ -98,22 +41,22 @@ public class ImageUtils {
         return ImmutableList.of(image1Scaled, image2Scaled);
     }
 
-    public static boolean isImage(String path) throws IOException {
+    public boolean isImage(String path) throws IOException {
         return checkContentType(path) || checkExtension(path);
     }
 
-    private static boolean checkExtension(String path) {
-        boolean isImage = false;
+    private boolean checkExtension(String path) {
+        boolean validImageExtension = false;
         for (String s : ImageIO.getReaderFormatNames()) {
             if (path.endsWith(s)) {
-                isImage = true;
+                validImageExtension = true;
                 break;
             }
         }
-        return isImage;
+        return validImageExtension;
     }
 
-    private static boolean checkContentType(String path)
+    private boolean checkContentType(String path)
             throws MalformedURLException, IOException, ProtocolException {
         URL url = new URL(path);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -121,4 +64,24 @@ public class ImageUtils {
         connection.connect();
         return connection.getContentType().contains("image");
     }
+
+    public BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage) {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null),
+                img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
+    }
+
+
 }

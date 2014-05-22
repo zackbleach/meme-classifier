@@ -3,6 +3,7 @@ package com.zackbleach.memetable.contentextraction.extractor;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,30 +13,33 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zackbleach.memetable.contentextraction.Site;
-import com.zackbleach.memetable.contentextraction.entity.ExtractedEntity;
 import com.zackbleach.memetable.contentextraction.entity.ExtractedMeme;
 import com.zackbleach.memetable.util.ImageUtils;
-import com.zackbleach.memetable.util.URLUtils;
 
 @Component
-public class MemeExtractor implements Extractor {
+public class MemeExtractor {
 
     private static final Logger log = Logger.getLogger(MemeExtractor.class);
 
-    //TODO: Consider refactoring this to take a URL object as a param?
-    public ExtractedEntity extractEntity(String path) throws IOException,
+    @Autowired
+    ImageUtils imageUtils;
+
+    // TODO: Consider refactoring this to take a URL object as a param?
+    public ExtractedMeme extractEntity(String path) throws IOException,
             URISyntaxException {
         ExtractedMeme meme = new ExtractedMeme();
-        URLUtils.validateUrl(path);
+        validateUrl(path);
         log.info("Beginning meme extraction from: " + path);
-        if (ImageUtils.isImage(path)) {
+        if (imageUtils.isImage(path)) {
             meme = retrieveMemeFromImage(path);
         } else {
             meme = retrieveMemeFromHtml(path);
@@ -66,7 +70,7 @@ public class MemeExtractor implements Extractor {
             URISyntaxException {
         log.info("Extracting Meme from HTML page");
         Document doc = getDocumentFromPath(path);
-        String domain = URLUtils.getDomainName(path);
+        String domain = getDomainName(path);
         ExtractedMeme meme = new ExtractedMeme();
         Site s = Site.siteFromDomain(domain);
         if (s != null) {
@@ -132,7 +136,8 @@ public class MemeExtractor implements Extractor {
         return getLargestImage(images);
     }
 
-    private BufferedImage extractImageFromKnownSite(Site site, Document doc) throws IOException {
+    private BufferedImage extractImageFromKnownSite(Site site, Document doc)
+            throws IOException {
         BufferedImage meme = null;
         for (String s : site.getImageExtractionPatterns()) {
             Element image = doc.select(s).first();
@@ -204,5 +209,22 @@ public class MemeExtractor implements Extractor {
                     + " ,couldn't read image");
         }
         return image;
+    }
+
+    public void validateUrl(String path) throws URISyntaxException {
+        String[] schemes = { "http", "https", "file" };
+        UrlValidator urlValidator = new UrlValidator(schemes,
+                UrlValidator.ALLOW_LOCAL_URLS);
+        if (!urlValidator.isValid(path)) {
+            throw new URISyntaxException(path, "Invalid URL");
+        }
+    }
+
+    public String getDomainName(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String domain = uri.getHost();
+        domain = domain.startsWith("www.") ? domain.substring(4) : domain;
+        String[] parts = domain.split("\\.");
+        return parts[0];
     }
 }

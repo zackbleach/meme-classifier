@@ -1,8 +1,11 @@
 package com.zackbleach.memetable.controller;
 
 import java.io.IOException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.TreeMap;
+
+import net.semanticmetadata.lire.imageanalysis.CEDD;
 
 import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
@@ -19,6 +22,8 @@ import com.zackbleach.memetable.classification.bucketer.Bucket;
 import com.zackbleach.memetable.classification.bucketer.Bucketer;
 import com.zackbleach.memetable.classification.classifier.Classification;
 import com.zackbleach.memetable.classification.classifier.Classifier;
+import com.zackbleach.memetable.templatescraper.Template;
+import com.zackbleach.memetable.util.ImageUtils;
 
 @Controller
 @RequestMapping("/meme")
@@ -32,6 +37,9 @@ public class TopMemeController {
     @Autowired
     Bucketer bucketer;
 
+    @Autowired
+    ImageUtils imageUtils;
+
     @RequestMapping(value = "/classify", method = RequestMethod.GET)
     public ResponseEntity<Classification> classifyMeme(String path)
             throws IOException, JsonParseException, JsonMappingException {
@@ -41,14 +49,27 @@ public class TopMemeController {
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ResponseEntity<Set<String>> getMemeNames()
+    public ResponseEntity<Map<String, String>> getMemeNames()
             throws IOException, JsonParseException, JsonMappingException {
-            Set<String> memeNames = new TreeSet<String>();
-            for (Bucket bucket : bucketer.getBuckets()) {
-                String prettyName = (WordUtils.capitalize(bucket.getName()));
-                memeNames.add(prettyName);
-            }
-        return new ResponseEntity<Set<String>>(memeNames, HttpStatus.OK);
+        Map<String, String> memeNames = new TreeMap<String, String>();
+        for (Bucket bucket : bucketer.getBuckets()) {
+            String prettyName = (WordUtils.capitalize(bucket.getName()));
+            String sourceUrl = bucket.getSourceUrl();
+            memeNames.put(prettyName, sourceUrl);
+        }
+        return new ResponseEntity<Map<String, String>>(memeNames, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/addMeme", method = RequestMethod.GET)
+    public ResponseEntity<String> addBucket(String name, String url) throws IOException,
+            URISyntaxException {
+        Template template = new Template();
+        template.setName(name);
+        template.setSourceUrl(url);
+        template.setImage(imageUtils.getImageFromUrl(url));
+        Bucket bucket = new Bucket(template, new CEDD());
+        bucketer.addBucket(bucket);
+        return new ResponseEntity<String>(url, HttpStatus.OK);
     }
 
 }

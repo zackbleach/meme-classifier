@@ -26,18 +26,13 @@ import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
 
 public class RedditScraper implements Scraper {
 
-    private static final Logger log = Logger.getLogger(MemeExtractor.class);
+    private static final Logger log = Logger.getLogger(RedditScraper.class);
     private static final String ADVICE_ANIMALS = "http://www.reddit.com/r/adviceanimals.json";
 
     public RedditScraper() {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.zackbleach.memetable.scraper.Scraper#scrape()
-     */
-    @Override
+   @Override
     public List<Post> scrape() throws JsonParseException, JsonMappingException,
             IOException {
         String json = getPage();

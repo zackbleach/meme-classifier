@@ -1,11 +1,14 @@
 package com.zackbleach.memetable.classification.bucketer;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
+import java.util.List;
 
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 
-import com.zackbleach.memetable.classification.featureextraction.MemeFeature;
+import com.google.common.collect.ImmutableList;
 import com.zackbleach.memetable.templatescraper.Template;
 
 /**
@@ -21,19 +24,44 @@ public class Bucket {
     // Should I keep a list of all features that are in here?
     private int id;
     private String name;
+    private String sourceUrl;
     private int volume;
-    private MemeFeature memeFeature;
+    private BufferedImage image;
+    private LireFeature memeFeature;
 
-    public Bucket(Template template, MemeFeature memeFeature) {
+    public Bucket(Template template, LireFeature memeFeature) {
         this.name = template.getName();
+        this.sourceUrl = template.getSourceUrl();
+        this.image = toBufferedImage(template.getImage());
         this.memeFeature = memeFeature;
-        memeFeature.extract((BufferedImage) template.getImage());
+    }
+
+    private BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage) {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null),
+                img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
     }
 
     public float getDistance(Image image) {
-        MemeFeature newFeature;
+        BufferedImage bufferedImage = toBufferedImage(image);
+        List<BufferedImage> scaledImages = scale(bufferedImage, this.image);
+        LireFeature myFeature;
+        LireFeature theirFeature;
         try {
-            newFeature = (MemeFeature) memeFeature.getClass().newInstance();
+            myFeature = (LireFeature) memeFeature.getClass().newInstance();
+            theirFeature = (LireFeature) memeFeature.getClass().newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
             return Float.MAX_VALUE;
@@ -41,9 +69,26 @@ public class Bucket {
             e.printStackTrace();
             return Float.MAX_VALUE;
         }
-        newFeature.extract((BufferedImage)image);
-        return memeFeature.getDistance((LireFeature)newFeature);
+        myFeature.extract(scaledImages.get(0));
+        theirFeature.extract(scaledImages.get(1));
+        return myFeature.getDistance(theirFeature);
     }
+
+    private List<BufferedImage> scale(BufferedImage image1,
+            BufferedImage image2) {
+        int height = 0;
+        if (image1.getHeight() > image2.getHeight()) {
+            height = image2.getHeight();
+        } else {
+            height = image1.getHeight();
+        }
+        BufferedImage image1Scaled = net.semanticmetadata.lire.utils.ImageUtils
+                .scaleImage(image1, height);
+        BufferedImage image2Scaled = net.semanticmetadata.lire.utils.ImageUtils
+                .scaleImage(image2, height);
+        return ImmutableList.of(image1Scaled, image2Scaled);
+    }
+
 
     public int getId() {
         return id;
@@ -69,34 +114,19 @@ public class Bucket {
         this.volume = volume;
     }
 
-    @Override
-    // TODO: could add name to this as well? - If I do
-    // remember to change the hashcoded method
-    // TODO: probably change this - not sure if protoype
-    // comparison is correct
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Bucket other = (Bucket) obj;
-        if (memeFeature == null) {
-            if (other.memeFeature != null)
-                return false;
-        } else if (!memeFeature.getDoubleHistogram().equals(other.memeFeature.getDoubleHistogram()))
-            return false;
-        return true;
+    public BufferedImage getImage() {
+        return image;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((memeFeature.getDoubleHistogram() == null) ? 0 : memeFeature.getDoubleHistogram().hashCode());
-        return result;
+    public void setImage(BufferedImage image) {
+        this.image = image;
     }
 
+    public String getSourceUrl() {
+        return sourceUrl;
+    }
+
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
+    }
 }

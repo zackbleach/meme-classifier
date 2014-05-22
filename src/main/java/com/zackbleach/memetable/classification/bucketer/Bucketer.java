@@ -6,14 +6,16 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import net.semanticmetadata.lire.imageanalysis.CEDD;
+
+import net.semanticmetadata.lire.imageanalysis.LireFeature;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.zackbleach.memetable.classification.featureextraction.CEDD;
 import com.zackbleach.memetable.templatescraper.QuickMemeScraper;
 import com.zackbleach.memetable.templatescraper.Template;
 
@@ -44,7 +46,7 @@ public class Bucketer {
     }
 
     @PostConstruct
-    @Scheduled(initialDelay=ONE_HOUR*12, fixedDelay=ONE_HOUR*12)
+    @Scheduled(initialDelay = ONE_HOUR * 12, fixedDelay = ONE_HOUR * 12)
     private void createBuckets() {
         List<Template> templates = quickMemeScraper.scrape();
         for (Template template : templates) {
@@ -58,4 +60,7 @@ public class Bucketer {
         return buckets;
     }
 
+    public void addBucket(Bucket bucket) {
+        buckets.add(bucket);
+    }
 }

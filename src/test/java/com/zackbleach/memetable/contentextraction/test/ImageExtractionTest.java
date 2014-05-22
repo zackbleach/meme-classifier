@@ -1,21 +1,5 @@
 package com.zackbleach.memetable.contentextraction.test;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import junit.framework.Assert;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.junit.Test;
-
-import com.zackbleach.memetable.contentextraction.entity.ExtractedEntity;
-import com.zackbleach.memetable.contentextraction.extractor.Extractor;
-import com.zackbleach.memetable.contentextraction.extractor.MemeExtractor;
-import com.zackbleach.memetable.util.ImageViewer;
 //FIXME: this should not rely on an internet connection - there should be local HTML files saved
 //public class ImageExtractionTest {
 

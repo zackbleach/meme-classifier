@@ -48,6 +48,7 @@ public class QuickMemeScraper {
         Template template = new Template();
         template.setImage(getImageFromUrl(src));
         template.setName(name);
+        template.setSourceUrl(src);
         return template;
     }
 

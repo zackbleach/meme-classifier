@@ -45,7 +45,7 @@ public class Classifier {
         return classification;
     }
 
-    private Classification threshold (Classification classification) {
+    private Classification threshold(Classification classification) {
         if (classification.getDistance() > threshold) {
             classification.setMemeName(NOT_SURE);
             classification.setDistance(NOT_SURE_DISTANCE);

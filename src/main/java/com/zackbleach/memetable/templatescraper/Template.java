@@ -6,6 +6,7 @@ public class Template {
 
     private Image image;
     private String name;
+    private String sourceUrl;
 
     public Image getImage() {
         return image;
@@ -21,6 +22,14 @@ public class Template {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSourceUrl() {
+        return sourceUrl;
+    }
+
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
     }
 
 }
