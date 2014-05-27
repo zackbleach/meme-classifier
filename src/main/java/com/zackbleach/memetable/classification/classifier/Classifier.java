@@ -41,15 +41,6 @@ public class Classifier {
         }
         classification.setMemeName(closest.getName());
         classification.setDistance(minDistance);
-        classification = threshold(classification);
-        return classification;
-    }
-
-    private Classification threshold(Classification classification) {
-        if (classification.getDistance() > threshold) {
-            classification.setMemeName(NOT_SURE);
-            classification.setDistance(NOT_SURE_DISTANCE);
-        }
         return classification;
     }
 }
