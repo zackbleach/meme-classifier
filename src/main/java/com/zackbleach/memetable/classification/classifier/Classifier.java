@@ -17,11 +17,6 @@ public class Classifier {
     @Autowired
     Bucketer bucketer;
 
-    public static final String NOT_SURE = "Not Sure";
-    public static final int NOT_SURE_DISTANCE = 0;
-
-    private final int threshold = 30;
-
     public Classification classify(String path) throws IOException {
         URL url = new URL(path);
         Image image = ImageIO.read(url);

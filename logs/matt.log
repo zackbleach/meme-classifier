@@ -1,3 +1,0 @@
-2013-05-24 14:24:43,061 DEBUG [MattController] - {hello=1}
-2013-05-24 14:24:43,061 WARN  [MattController] - hello warn!
-2013-05-24 14:24:43,061 ERROR [MattController] - hello error

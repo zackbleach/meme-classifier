@@ -7,7 +7,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import net.semanticmetadata.lire.imageanalysis.CEDD;
-
+import net.semanticmetadata.lire.imageanalysis.FuzzyColorHistogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 
 import org.apache.commons.logging.Log;
@@ -16,27 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.zackbleach.memetable.templatescraper.QuickMemeScraper;
+import com.zackbleach.memetable.templatescraper.QuickMemeTemplateScraper;
 import com.zackbleach.memetable.templatescraper.Template;
 
 @Component
 public class Bucketer {
     private static final Log logger = LogFactory.getLog(Bucketer.class);
 
+    //TODO: persist template - use file system and reddis?
+
     @Autowired
-    QuickMemeScraper quickMemeScraper;
-
-    // TODO: there will be another app in the background
-    // that temporarily scrapes templates from popular
-    // meme sites - those will be saved in to a database
-    // and used to populate the initial buckets
-    //
-    // There may have to be a different type of storage for
-    // clusters found that don't currently have a matching
-    // template
-
-    // @Autowire
-    // TemplateStorage templateStorage;
+    QuickMemeTemplateScraper quickMemeScraper;
 
     private Set<Bucket> buckets = new HashSet<Bucket>();
 
@@ -49,8 +39,8 @@ public class Bucketer {
     @Scheduled(initialDelay = ONE_HOUR * 12, fixedDelay = ONE_HOUR * 12)
     private void createBuckets() {
         List<Template> templates = quickMemeScraper.scrape();
+        logger.debug("Creating Buckets");
         for (Template template : templates) {
-            logger.debug("Creating Buckets");
             Bucket bucket = new Bucket(template, new CEDD());
             buckets.add(bucket);
         }
