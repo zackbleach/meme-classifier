@@ -1,0 +1,16 @@
+Eclipse files
+.classpath
+.project
+.settings
+workbench.xmi
+
+# build artifacts
+target/
+
+#OS X Stuff
+.DS_STORE
+
+*index/
+to.do
+memes/
+
