@@ -97,7 +97,6 @@ public class MemeClassificationController {
         List<Result> results = new ArrayList<Result>();
         for (int i = 0; i < hits.length(); i++) {
             Document doc = hits.doc(i);
-            log.warn(doc.getFields());
             Result result = new Result(hits.score(i),
                     doc.get(DocumentBuilder.FIELD_NAME_IDENTIFIER));
             results.add(result);
