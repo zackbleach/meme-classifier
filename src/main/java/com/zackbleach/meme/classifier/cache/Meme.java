@@ -1,12 +1,18 @@
-package com.zackbleach.memetable.scraper;
+package com.zackbleach.meme.classifier.cache;
 
 import java.awt.image.BufferedImage;
 
-public class ScrapedImage {
+public class Meme {
 
     private BufferedImage image;
     private String name;
     private String sourceUrl;
+
+    public Meme(String name, String sourceUrl, BufferedImage image) {
+        this.name = name;
+        this.sourceUrl = sourceUrl;
+        this.image = image;
+    }
 
     public BufferedImage getImage() {
         return image;

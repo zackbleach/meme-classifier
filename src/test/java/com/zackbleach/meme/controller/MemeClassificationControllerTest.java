@@ -1,4 +1,4 @@
-package com.zackbleach.memetable.controller;
+package com.zackbleach.meme.controller;
 
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.when;
@@ -11,8 +11,9 @@ import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import com.zackbleach.memetable.bucketer.Index;
-import com.zackbleach.memetable.featureextraction.FeatureExtractor;
+import com.zackbleach.meme.classifier.controller.MemeClassificationController;
+import com.zackbleach.meme.classifier.featureextraction.FeatureExtractor;
+import com.zackbleach.meme.classifier.index.Index;
 
 public class MemeClassificationControllerTest {
 

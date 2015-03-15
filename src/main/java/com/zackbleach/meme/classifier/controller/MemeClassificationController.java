@@ -1,4 +1,4 @@
-package com.zackbleach.memetable.controller;
+package com.zackbleach.meme.classifier.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
@@ -24,11 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.zackbleach.memetable.bucketer.Index;
-import com.zackbleach.memetable.utils.ImageUtils;
+import com.zackbleach.meme.classifier.index.Index;
+import com.zackbleach.meme.classifier.utils.ImageUtils;
+import com.zackbleach.meme.scraper.ScrapedImage;
 
 @Controller
 @RequestMapping("/meme")
@@ -37,48 +34,29 @@ public class MemeClassificationController {
             .getLog(MemeClassificationController.class);
 
     @Autowired
-    Index index;
+    private Index index;
 
     @Autowired
-    ImageUtils imageUtils;
+    private ImageUtils imageUtils;
 
-    private LoadingCache<String, BufferedImage> graphs = CacheBuilder.newBuilder()
-            .maximumSize(1000).expireAfterWrite(60, TimeUnit.MINUTES)
-            .build(new CacheLoader<String, BufferedImage>() {
-                public BufferedImage load(String path) throws IOException,
-                        URISyntaxException {
-                 return imageUtils.getImageFromUrl(path);
-                }
-            });
-
-    @RequestMapping(value = "/classify/ranked", method = RequestMethod.GET)
-    public ResponseEntity<List<Result>> classifyMemeRanked(String path)
-            throws IOException, JsonParseException, JsonMappingException,
-            URISyntaxException, ExecutionException {
-        BufferedImage image = graphs.get(path);
-        ImageSearchHits hits = index.search(image);
-        return new ResponseEntity<List<Result>>(presentHits(hits),
-                HttpStatus.OK);
-    }
 
     @RequestMapping(value = "/classify", method = RequestMethod.GET)
     public ResponseEntity<Result> classifyMeme(String path) throws IOException,
             JsonParseException, JsonMappingException, URISyntaxException,
             ExecutionException {
-        BufferedImage image = graphs.get(path);
+        BufferedImage image = imageUtils.getImageFromUrl(path);
+        log.info("Classifying: " + path);
         ImageSearchHits hits = index.search(image);
         return new ResponseEntity<Result>(presentHits(hits).iterator().next(),
                 HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/addMeme", method = RequestMethod.GET)
-    public ResponseEntity<String> addMeme(String path, String name)
-            throws IOException, JsonParseException, JsonMappingException,
-            URISyntaxException, ExecutionException {
-        index.add(imageUtils.getImageFromUrl(path), name);
-        return new ResponseEntity<String>("Added Meme: " + name, HttpStatus.OK);
+    @RequestMapping(value = "/getAllDocs", method = RequestMethod.GET)
+    public ResponseEntity<List<ScrapedImage>> getAllDocs() throws IOException,
+            JsonParseException, JsonMappingException, URISyntaxException,
+            ExecutionException {
+        return new ResponseEntity<List<ScrapedImage>>(index.getAllDocs(), HttpStatus.OK);
     }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgumentException(
             IllegalArgumentException e) {
@@ -97,9 +75,11 @@ public class MemeClassificationController {
         List<Result> results = new ArrayList<Result>();
         for (int i = 0; i < hits.length(); i++) {
             Document doc = hits.doc(i);
-            Result result = new Result(hits.score(i),
-                    doc.get(DocumentBuilder.FIELD_NAME_IDENTIFIER));
+            Result result = new Result(hits.score(i), doc.get(Index.MEME_TYPE));
             results.add(result);
+            log.info("Result URL: "
+                    + doc.get(DocumentBuilder.FIELD_NAME_IDENTIFIER));
+            log.info("Distance: " + hits.score(i));
         }
         return results;
     }

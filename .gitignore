@@ -10,7 +10,10 @@ target/
 #OS X Stuff
 .DS_STORE
 
-*index/
+meme-index/
+meme-test-index/
 to.do
 memes/
 
+*.jar
+*.bak

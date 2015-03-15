@@ -1,4 +1,4 @@
-package com.zackbleach.memetable.controller;
+package com.zackbleach.meme.classifier.controller;
 
 public class Result {
 
