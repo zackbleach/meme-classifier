@@ -25,7 +25,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.zackbleach.meme.classifier.index.Index;
 import com.zackbleach.meme.classifier.utils.ImageUtils;
-import com.zackbleach.meme.scraper.ScrapedImage;
 
 @Controller
 @RequestMapping("/meme")
@@ -51,12 +50,6 @@ public class MemeClassificationController {
                 HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/getAllDocs", method = RequestMethod.GET)
-    public ResponseEntity<List<ScrapedImage>> getAllDocs() throws IOException,
-            JsonParseException, JsonMappingException, URISyntaxException,
-            ExecutionException {
-        return new ResponseEntity<List<ScrapedImage>>(index.getAllDocs(), HttpStatus.OK);
-    }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgumentException(
             IllegalArgumentException e) {
