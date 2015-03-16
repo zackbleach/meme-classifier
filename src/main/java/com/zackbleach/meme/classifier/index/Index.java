@@ -15,9 +15,11 @@ import javax.annotation.Resource;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
+import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.impl.ParallelImageSearcher;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 
 import org.apache.commons.logging.Log;
@@ -51,7 +53,7 @@ public class Index {
     @Autowired
     private MemeCache cache;
 
-    @Resource(name = "scrapers")
+    @Resource(name="scrapers")
     private List<Scraper> scrapers;
 
     private static final Log logger = LogFactory.getLog(Index.class);
@@ -97,12 +99,8 @@ public class Index {
     private void create() throws IOException, URISyntaxException {
         builder = new GenericDocumentBuilder(featureExtractionMethod);
         File index = new File(INDEX_LOCATION);
-        indexWriter = createIndexWriter();
-        if (index.exists()) {
-            indexReader = DirectoryReader.open(indexWriter, true);
-        } else {
-            update();
-        }
+        indexWriter = getIndexWriter();
+        indexReader = DirectoryReader.open(indexWriter, true);
     }
 
     @PreDestroy
@@ -110,13 +108,12 @@ public class Index {
         indexWriter.close();
     }
 
-    private IndexWriter createIndexWriter() throws IOException {
+    private IndexWriter getIndexWriter() throws IOException {
         IndexWriterConfig conf = new IndexWriterConfig(
                 LuceneUtils.LUCENE_VERSION, new WhitespaceAnalyzer(
                         LuceneUtils.LUCENE_VERSION));
         conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
         return new IndexWriter(FSDirectory.open(new File(INDEX_LOCATION)), conf);
-
     }
 
     public void add(String imageUrl, String name) throws IOException,
@@ -130,6 +127,7 @@ public class Index {
         for (Document document : documents) {
             logger.info("Adding meme to index: " + document.getField(MEME_TYPE));
             String name = document.get(DocumentBuilder.FIELD_NAME_IDENTIFIER);
+            logger.info("Name is: " + name);
             Term term = new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, name);
             indexWriter.updateDocument(term, document);
         }
@@ -145,14 +143,32 @@ public class Index {
     public ImageSearchHits search(BufferedImage image) throws IOException {
         ImageSearcher imageSearcher = new GenericFastImageSearcher(10,
                 featureExtractionMethod);
+        // ImageSearcher imageSearcher = ImageSearcherFactory.createColorLayoutImageSearcher(10);
         ImageSearchHits hits = imageSearcher.search(image, indexReader);
         return hits;
     }
 
-    private Document createDocument(Meme meme) throws FileNotFoundException {
-        Document document = builder.createDocument(meme.getImage(),
-                meme.getSourceUrl());
-        document.add(new StoredField(MEME_TYPE, meme.getName()));
-        return document;
+    public List<ScrapedImage> getAllDocs() {
+        List<ScrapedImage> docs = new ArrayList<ScrapedImage>();
+        for (int i=0; i< indexReader.maxDoc(); i++) {
+            Document doc;
+            try {
+                doc = indexReader.document(i);
+                String url = doc.getField(GenericDocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+                String name = doc.getField(MEME_TYPE).stringValue();
+                ScrapedImage image = new ScrapedImage(name, url);
+                docs.add(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return docs;
     }
+
+        private Document createDocument(Meme meme) throws FileNotFoundException {
+            Document document = builder.createDocument(meme.getImage(),
+                    meme.getSourceUrl());
+            document.add(new StoredField(MEME_TYPE, meme.getName()));
+            return document;
+        }
 }

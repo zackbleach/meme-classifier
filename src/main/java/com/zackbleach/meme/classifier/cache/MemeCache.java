@@ -46,6 +46,7 @@ public class MemeCache {
            return new Meme(name, url, image);
     }
 
+    //TODO: there's a chance that names will overlap here. Fix.
     private Meme saveToCache(String url, String name) throws IOException,
             URISyntaxException {
         BufferedImage image = imageUtils.getImageFromUrl(url);
@@ -57,5 +58,4 @@ public class MemeCache {
         redis.opsForHash().put(url, NAME, name);
         return new Meme(name, url, image);
     }
-
 }

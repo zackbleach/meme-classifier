@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.zackbleach.meme.classifier.index.Index;
 import com.zackbleach.meme.classifier.utils.ImageUtils;
+import com.zackbleach.meme.scraper.ScrapedImage;
 
 @Controller
 @RequestMapping("/meme")
@@ -38,7 +39,6 @@ public class MemeClassificationController {
     @Autowired
     private ImageUtils imageUtils;
 
-
     @RequestMapping(value = "/classify", method = RequestMethod.GET)
     public ResponseEntity<Result> classifyMeme(String path) throws IOException,
             JsonParseException, JsonMappingException, URISyntaxException,
@@ -48,6 +48,23 @@ public class MemeClassificationController {
         ImageSearchHits hits = index.search(image);
         return new ResponseEntity<Result>(presentHits(hits).iterator().next(),
                 HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getAllDocs", method = RequestMethod.GET)
+    public ResponseEntity<List<ScrapedImage>> getAllDocs() throws IOException,
+            JsonParseException, JsonMappingException, URISyntaxException,
+            ExecutionException {
+        return new ResponseEntity<List<ScrapedImage>>(index.getAllDocs(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/getDistance", method = RequestMethod.GET)
+    public ResponseEntity<Double>getDistance(String urlOne, String urlTwo) throws IOException,
+            JsonParseException, JsonMappingException, URISyntaxException,
+            ExecutionException {
+                BufferedImage imageOne = imageUtils.getImageFromUrl(urlOne);
+                BufferedImage imageTwo = imageUtils.getImageFromUrl(urlTwo);
+                double distance = imageUtils.getDistance(imageOne, imageTwo);
+        return new ResponseEntity<Double>(distance, HttpStatus.OK);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

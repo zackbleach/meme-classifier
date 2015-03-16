@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.zackbleach.meme.scraper.ImgflipScraper;
 import com.zackbleach.meme.scraper.MemegurScraper;
+import com.zackbleach.meme.scraper.QuickMemeScraper;
 import com.zackbleach.meme.scraper.Scraper;
 
 @Configuration
@@ -44,7 +45,8 @@ public class Config {
     @Bean(name="scrapers")
     List<Scraper> scrapers() {
         List<Scraper> scrapers = new ArrayList<Scraper>();
-        scrapers.add(new ImgflipScraper());
+        // scrapers.add(new ImgflipScraper());
+        // scrapers.add(new QuickMemeScraper());
         scrapers.add(new MemegurScraper());
         return scrapers;
     }

@@ -10,11 +10,17 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import net.semanticmetadata.lire.imageanalysis.LireFeature;
+
 import org.apache.commons.validator.routines.UrlValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ImageUtils {
+
+    @Autowired
+    private Class<? extends LireFeature> feauteExtractor;
 
     public BufferedImage getImageFromUrl(String path) throws IOException,
             URISyntaxException {
@@ -66,7 +72,20 @@ public class ImageUtils {
                     "Could not read an image from the specified location");
         }
         return convertToBgr(image);
+    }
 
+    public double getDistance(BufferedImage image1, BufferedImage image2) {
+        double distance = 0;
+        try {
+            LireFeature feature1 = feauteExtractor.newInstance();
+            LireFeature feature2 = feauteExtractor.newInstance();
+            feature1.extract(image1);
+            feature2.extract(image2);
+            distance = feature1.getDistance(feature2);
+        } catch (InstantiationException | IllegalAccessException e) {
+            //not happening
+        }
+        return distance;
     }
 
 }
