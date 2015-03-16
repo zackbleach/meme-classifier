@@ -6,9 +6,14 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -18,9 +23,15 @@ import com.zackbleach.meme.scraper.ScrapedImage;
 
 @Repository
 public class MemeCache {
+    private static final Log log =
+        LogFactory.getLog(MemeCache.class);
+
 
     @Autowired
     private RedisTemplate<String, Map<String, String>> redis;
+
+    @Autowired
+    private JedisPool jedisPool;
 
     @Autowired
     private ImageUtils imageUtils;
@@ -40,8 +51,10 @@ public class MemeCache {
     }
 
     private Meme getFromCache(String url) throws IOException {
-           String path = (String) redis.opsForHash().get(url, PATH);
-           String name = (String) redis.opsForHash().get(url, NAME);
+           Jedis jedis = jedisPool.getResource();
+           String path = (String) jedis.hget(url, PATH);
+           log.info("Getting from path: " + path);
+           String name = (String) jedis.hget(url, NAME);
            BufferedImage image = imageUtils.readFromDisk(path);
            return new Meme(name, url, image);
     }
@@ -49,13 +62,14 @@ public class MemeCache {
     //TODO: there's a chance that names will overlap here. Fix.
     private Meme saveToCache(String url, String name) throws IOException,
             URISyntaxException {
+        Jedis jedis = jedisPool.getResource();
         BufferedImage image = imageUtils.getImageFromUrl(url);
         String filename = name.replaceAll(" ", "-") + "_" + FilenameUtils.getBaseName(url)
             + "." + FilenameUtils.getExtension(url);
         String path = MEME_STORAGE_DIR + filename;
         imageUtils.saveToDisk(path, image);
-        redis.opsForHash().put(url, PATH, path);
-        redis.opsForHash().put(url, NAME, name);
+        jedis.hset(url, PATH, path);
+        jedis.hset(url, NAME, name);
         return new Meme(name, url, image);
     }
 }

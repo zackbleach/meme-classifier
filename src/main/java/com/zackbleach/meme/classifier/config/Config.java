@@ -1,5 +1,7 @@
 package com.zackbleach.meme.classifier.config;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +16,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.zackbleach.meme.scraper.ImgflipScraper;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
+
 import com.zackbleach.meme.scraper.MemegurScraper;
-import com.zackbleach.meme.scraper.QuickMemeScraper;
 import com.zackbleach.meme.scraper.Scraper;
 
 @Configuration
@@ -40,6 +44,21 @@ public class Config {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
         return redisTemplate;
+    }
+
+    @Bean
+    public JedisPool jedisPool() {
+        try {
+            URI redisURI = new URI(System.getenv("REDISTOGO_URL"));
+            return new JedisPool(new JedisPoolConfig(),
+                    redisURI.getHost(),
+                    redisURI.getPort(),
+                    Protocol.DEFAULT_TIMEOUT,
+                    null);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Redis couldn't be configured from URL in REDISTOGO_URL env var: "+
+                    System.getenv("REDISTOGO_URL"));
+        }
     }
 
     @Bean(name="scrapers")
