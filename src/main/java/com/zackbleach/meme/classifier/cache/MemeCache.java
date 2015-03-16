@@ -35,6 +35,7 @@ public class MemeCache {
     private final String PATH = "path";
     private final String NAME = "name";
 
+    //TODO: Tidy
     public Meme getMeme(ScrapedImage image) throws IOException,
             URISyntaxException {
         Jedis jedis = jedisPool.getResource();
@@ -43,9 +44,15 @@ public class MemeCache {
             if (!jedis.exists(url)) {
                 return saveToCache(url, image.getName());
             } else {
-                return getFromCache(url);
+                try {
+                    return getFromCache(url);
+                } catch (IOException e) {
+                    log.error("Error getting meme from cache: "+ url);
+                    return new Meme(image.getName(), image.getSourceUrl(), imageUtils.getImageFromUrl(image.getSourceUrl()));
+                }
             }
-        } finally {
+        }
+        finally {
             jedisPool.returnResource(jedis);
         }
     }
