@@ -26,9 +26,6 @@ public class MemeCache {
     private static final Log log = LogFactory.getLog(MemeCache.class);
 
     @Autowired
-    private RedisTemplate<String, Map<String, String>> redis;
-
-    @Autowired
     private JedisPool jedisPool;
 
     @Autowired
@@ -40,11 +37,16 @@ public class MemeCache {
 
     public Meme getMeme(ScrapedImage image) throws IOException,
             URISyntaxException {
-        String url = image.getSourceUrl();
-        if (!redis.hasKey(url)) {
-            return saveToCache(url, image.getName());
-        } else {
-            return getFromCache(url);
+        Jedis jedis = jedisPool.getResource();
+        try {
+            String url = image.getSourceUrl();
+            if (!jedis.exists(url)) {
+                return saveToCache(url, image.getName());
+            } else {
+                return getFromCache(url);
+            }
+        } finally {
+            jedisPool.returnResource(jedis);
         }
     }
 
