@@ -54,7 +54,7 @@ public class Config {
                     redisURI.getHost(),
                     redisURI.getPort(),
                     Protocol.DEFAULT_TIMEOUT,
-                    null);
+                    redisURI.getUserInfo().split(":",2)[1]);
         } catch (URISyntaxException e) {
             throw new RuntimeException("Redis couldn't be configured from URL in REDISTOGO_URL env var: "+
                     System.getenv("REDISTOGO_URL"));
