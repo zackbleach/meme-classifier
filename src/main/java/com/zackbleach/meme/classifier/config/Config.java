@@ -49,7 +49,7 @@ public class Config {
     @Bean
     public JedisPool jedisPool() {
         try {
-            URI redisURI = new URI(System.getenv("REDISTOGO_URL"));
+            URI redisURI = new URI(System.getenv("REDISCLOUD_URL"));
             return new JedisPool(new JedisPoolConfig(),
                     redisURI.getHost(),
                     redisURI.getPort(),
