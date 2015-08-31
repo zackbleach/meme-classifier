@@ -143,7 +143,6 @@ public class Index {
     public ImageSearchHits search(BufferedImage image) throws IOException {
         ImageSearcher imageSearcher = new GenericFastImageSearcher(10,
                 featureExtractionMethod);
-        // ImageSearcher imageSearcher = ImageSearcherFactory.createColorLayoutImageSearcher(10);
         ImageSearchHits hits = imageSearcher.search(image, indexReader);
         return hits;
     }

@@ -26,66 +26,12 @@ public class MemeCache {
     private static final Log log = LogFactory.getLog(MemeCache.class);
 
     @Autowired
-    private JedisPool jedisPool;
-
-    @Autowired
     private ImageUtils imageUtils;
 
-    private final String MEME_STORAGE_DIR = "memes/";
-    private final String PATH = "path";
-    private final String NAME = "name";
-
     //TODO: Tidy
-    public Meme getMeme(ScrapedImage image) throws IOException,
-            URISyntaxException {
-        Jedis jedis = jedisPool.getResource();
-        try {
-            String url = image.getSourceUrl();
-            if (!jedis.exists(url)) {
-                return saveToCache(url, image.getName());
-            } else {
-                try {
-                    return getFromCache(url);
-                } catch (IOException e) {
-                    log.error("Error getting meme from cache: "+ url);
-                    return new Meme(image.getName(), image.getSourceUrl(), imageUtils.getImageFromUrl(image.getSourceUrl()));
-                }
-            }
-        }
-        finally {
-            jedisPool.returnResource(jedis);
-        }
-    }
-
-    private Meme getFromCache(String url) throws IOException {
-        Jedis jedis = jedisPool.getResource();
-        try {
-            String path = (String) jedis.hget(url, PATH);
-            log.info("Getting from path: " + path);
-            String name = (String) jedis.hget(url, NAME);
-            BufferedImage image = imageUtils.readFromDisk(path);
-            return new Meme(name, url, image);
-        } finally {
-            jedisPool.returnResource(jedis);
-        }
-    }
-
-    // TODO: there's a chance that names will overlap here. Fix.
-    private Meme saveToCache(String url, String name) throws IOException,
-            URISyntaxException {
-        Jedis jedis = jedisPool.getResource();
-        try {
-            BufferedImage image = imageUtils.getImageFromUrl(url);
-            String filename = name.replaceAll(" ", "-") + "_"
-                    + FilenameUtils.getBaseName(url) + "."
-                    + FilenameUtils.getExtension(url);
-            String path = MEME_STORAGE_DIR + filename;
-            imageUtils.saveToDisk(path, image);
-            jedis.hset(url, PATH, path);
-            jedis.hset(url, NAME, name);
-            return new Meme(name, url, image);
-        } finally {
-            jedisPool.returnResource(jedis);
-        }
+    public Meme getMeme(ScrapedImage image) throws URISyntaxException,
+            IOException {
+            BufferedImage meme = imageUtils.getImageFromUrl(image.getSourceUrl());
+            return new Meme(image.getName(), image.getSourceUrl(), meme);
     }
 }
