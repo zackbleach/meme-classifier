@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.zackbleach.meme.classifier.index.BuildingIndexException;
 import com.zackbleach.meme.classifier.index.Index;
 import com.zackbleach.meme.classifier.utils.ImageUtils;
 
@@ -41,13 +42,21 @@ public class MemeClassificationController {
     @RequestMapping(value = "/classify", method = RequestMethod.GET)
     public ResponseEntity<Result> classifyMeme(String path) throws IOException,
             JsonParseException, JsonMappingException, URISyntaxException,
-            ExecutionException {
+            ExecutionException, BuildingIndexException {
         BufferedImage image = imageUtils.getImageFromUrl(path);
         log.info("Classifying: " + path);
         ImageSearchHits hits = index.search(image);
         return new ResponseEntity<Result>(presentHits(hits).iterator().next(),
                 HttpStatus.OK);
     }
+
+    @ExceptionHandler(BuildingIndexException.class)
+    public ResponseEntity<String> buildingIndexException(
+            BuildingIndexException e) {
+        return new ResponseEntity<String>(e.getMessage(),
+                HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgumentException(

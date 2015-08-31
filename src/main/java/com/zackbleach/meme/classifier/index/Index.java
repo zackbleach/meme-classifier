@@ -66,6 +66,8 @@ public class Index {
 
     public static String MEME_TYPE = "meme-type";
 
+    public boolean buildingIndex = false;
+
     private List<ScrapedImage> getScrapedImages() {
         List<ScrapedImage> images = new ArrayList<ScrapedImage>();
         for (Scraper scraper : scrapers) {
@@ -77,6 +79,11 @@ public class Index {
     @Async
     @Scheduled(fixedDelay = ONE_HOUR * 12)
     private void update() throws URISyntaxException, IOException {
+        rebuildIndex();
+    }
+
+    private void rebuildIndex() throws URISyntaxException, IOException {
+        buildingIndex = true;
         List<Document> documents = new ArrayList<Document>();
         for (ScrapedImage example : getScrapedImages()) {
             Document document;
@@ -93,12 +100,16 @@ public class Index {
         }
         logger.warn("Total memes in index: " + indexReader.numDocs());
         add(documents);
+        buildingIndex = false;
     }
 
     @PostConstruct
     private void create() throws IOException, URISyntaxException {
         builder = new GenericDocumentBuilder(featureExtractionMethod);
         File index = new File(INDEX_LOCATION);
+        if (!index.exists()) {
+            rebuildIndex();
+        }
         indexWriter = getIndexWriter();
         indexReader = DirectoryReader.open(indexWriter, true);
     }
@@ -140,7 +151,11 @@ public class Index {
         return indexReader.numDocs();
     }
 
-    public ImageSearchHits search(BufferedImage image) throws IOException {
+    public ImageSearchHits search(BufferedImage image) throws IOException,
+            BuildingIndexException {
+        if (buildingIndex) {
+            throw new BuildingIndexException("Building Index! Please wait");
+        }
         ImageSearcher imageSearcher = new GenericFastImageSearcher(10,
                 featureExtractionMethod);
         ImageSearchHits hits = imageSearcher.search(image, indexReader);
