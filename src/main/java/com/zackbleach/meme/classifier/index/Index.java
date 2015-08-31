@@ -107,9 +107,6 @@ public class Index {
     private void create() throws IOException, URISyntaxException {
         builder = new GenericDocumentBuilder(featureExtractionMethod);
         File index = new File(INDEX_LOCATION);
-        if (!index.exists()) {
-            rebuildIndex();
-        }
         indexWriter = getIndexWriter();
         indexReader = DirectoryReader.open(indexWriter, true);
     }
