@@ -28,6 +28,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.zackbleach.meme.classifier.controller.MemeClassificationController;
 import com.zackbleach.meme.classifier.controller.Result;
+import com.zackbleach.meme.classifier.index.BuildingIndexException;
 import com.zackbleach.meme.classifier.index.Index;
 import com.zackbleach.meme.classifier.utils.ImageUtils;
 
@@ -51,7 +52,8 @@ public class MemeClassificationControllerTest {
     MemeClassificationController controller = new MemeClassificationController();
 
     @Before
-    public void setup() throws IOException, URISyntaxException {
+    public void setup() throws IOException, URISyntaxException,
+            BuildingIndexException {
         BufferedImage image = readImageFromDisk(TEST_IMAGE);
         when(imageUtils.getImageFromUrl(any(String.class))).thenReturn(image);
         when(index.search(image)).thenReturn(hits);
@@ -65,8 +67,9 @@ public class MemeClassificationControllerTest {
 
     @Test
     public void givenValidPath_whenClassifyingMeme_thenReturnClassification()
-            throws IOException, URISyntaxException, ExecutionException {
-      System.out.println(controller.classifyMeme("http://www.memes.com"));
+            throws IOException, URISyntaxException, ExecutionException,
+            BuildingIndexException {
+   System.out.println(controller.classifyMeme("http://www.memes.com"));
     }
 
     private BufferedImage readImageFromDisk(String path) throws IOException {
