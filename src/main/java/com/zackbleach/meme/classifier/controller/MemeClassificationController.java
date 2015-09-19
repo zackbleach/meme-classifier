@@ -23,11 +23,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
 import com.zackbleach.meme.classifier.index.BuildingIndexException;
 import com.zackbleach.meme.classifier.index.Index;
 import com.zackbleach.meme.classifier.utils.ImageUtils;
 
 @Controller
+@Api(value = "Meme Classifier API", description = "Endpoints for classifying memes.")
 @RequestMapping("/meme")
 public class MemeClassificationController {
     private static final Log log = LogFactory
@@ -39,12 +42,13 @@ public class MemeClassificationController {
     @Autowired
     private ImageUtils imageUtils;
 
+    @ApiOperation(value = "Classifies a Meme", notes = "Takes a URL which points to an image, then attempts to classify that image as a meme. Returns the name of the meme, as well as the distance from the archetype. You could use the distance as a rough measure of confidence")
     @RequestMapping(value = "/classify", method = RequestMethod.GET)
-    public ResponseEntity<Result> classifyMeme(String path) throws IOException,
+    public ResponseEntity<Result> classifyMeme(String url) throws IOException,
             JsonParseException, JsonMappingException, URISyntaxException,
             ExecutionException, BuildingIndexException {
-        BufferedImage image = imageUtils.getImageFromUrl(path);
-        log.info("Classifying: " + path);
+        BufferedImage image = imageUtils.getImageFromUrl(url);
+        log.info("Classifying: " + url);
         ImageSearchHits hits = index.search(image);
         return new ResponseEntity<Result>(presentHits(hits).iterator().next(),
                 HttpStatus.OK);
