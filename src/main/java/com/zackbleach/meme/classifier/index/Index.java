@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -65,7 +66,7 @@ public class Index {
     private IndexReader indexReader;
     private IndexWriter indexWriter;
 
-    private Set<String> seenMemes;
+    private Set<String> seenMemes = new HashSet<String>();
 
     public static String MEME_TYPE = "meme-type";
 
