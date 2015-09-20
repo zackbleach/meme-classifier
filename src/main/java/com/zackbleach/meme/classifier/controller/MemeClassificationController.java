@@ -12,6 +12,7 @@ import net.semanticmetadata.lire.ImageSearchHits;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.lucene.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,8 @@ public class MemeClassificationController {
     public ResponseEntity<Result> classifyMeme(String url) throws IOException,
             JsonParseException, JsonMappingException, URISyntaxException,
             ExecutionException, BuildingIndexException {
+        UrlValidator validator = new UrlValidator();
+        validator.isValid(url); //throws exception if not
         BufferedImage image = imageUtils.getImageFromUrl(url);
         log.info("Classifying: " + url);
         ImageSearchHits hits = index.search(image);
@@ -65,6 +68,13 @@ public class MemeClassificationController {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> illegalArgumentException(
             IllegalArgumentException e) {
+        return new ResponseEntity<String>(e.getMessage(),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(URISyntaxException.class)
+    public ResponseEntity<String> uriSyntaxException(
+            URISyntaxException e) {
         return new ResponseEntity<String>(e.getMessage(),
                 HttpStatus.BAD_REQUEST);
     }

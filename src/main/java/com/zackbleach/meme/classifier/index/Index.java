@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -64,9 +65,13 @@ public class Index {
     private IndexReader indexReader;
     private IndexWriter indexWriter;
 
+    private Set<String> seenMemes;
+
     public static String MEME_TYPE = "meme-type";
 
-    public boolean buildingIndex = false;
+    // Initialised to true so that it blocks calls just after booting when it's scraping the first set of memes
+    public boolean buildingIndex = true;
+
 
     private List<ScrapedImage> getScrapedImages() {
         List<ScrapedImage> images = new ArrayList<ScrapedImage>();
@@ -83,24 +88,32 @@ public class Index {
     }
 
     private void rebuildIndex() throws URISyntaxException, IOException {
-        buildingIndex = true;
-        List<Document> documents = new ArrayList<Document>();
-        for (ScrapedImage example : getScrapedImages()) {
-            Document document;
-            try {
-                Meme meme = cache.getMeme(example);
-                document = createDocument(meme);
-            } catch (IOException e) {
-                logger.warn("Skipping: " + example.getSourceUrl());
-                continue;
-            }
-            logger.warn("Adding meme to index: " + example.getName()
-                    + ". From: " + example.getSourceUrl());
-            documents.add(document);
-        }
         logger.warn("Total memes in index: " + indexReader.numDocs());
+        List<Document> documents = scrapeMemes();
+        buildingIndex = true;
         add(documents);
         buildingIndex = false;
+    }
+
+    private List<Document> scrapeMemes() throws URISyntaxException {
+        List<Document> documents = new ArrayList<Document>();
+        for (ScrapedImage example : getScrapedImages()) {
+            if (!seenMemes.contains(example.getSourceUrl())) {
+                seenMemes.add(example.getSourceUrl());
+                Document document;
+                try {
+                    Meme meme = cache.getMeme(example);
+                    document = createDocument(meme);
+                } catch (IOException e) {
+                    logger.warn("Skipping: " + example.getSourceUrl());
+                    continue;
+                }
+                logger.warn("Adding meme to index: " + example.getName()
+                        + ". From: " + example.getSourceUrl());
+                documents.add(document);
+            }
+        }
+        return documents;
     }
 
     @PostConstruct
