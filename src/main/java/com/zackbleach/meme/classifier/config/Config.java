@@ -27,8 +27,8 @@ public class Config {
     @Bean(name="scrapers")
     List<Scraper> scrapers() {
         List<Scraper> scrapers = new ArrayList<Scraper>();
-        // scrapers.add(new ImgflipScraper());
-        // scrapers.add(new QuickMemeScraper());
+        scrapers.add(new ImgflipScraper());
+        scrapers.add(new QuickMemeScraper());
         scrapers.add(new MemegurScraper());
         return scrapers;
     }
