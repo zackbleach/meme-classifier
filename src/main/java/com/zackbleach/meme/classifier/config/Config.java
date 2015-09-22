@@ -29,7 +29,7 @@ public class Config {
         List<Scraper> scrapers = new ArrayList<Scraper>();
         scrapers.add(new ImgflipScraper());
         scrapers.add(new QuickMemeScraper());
-       // scrapers.add(new MemegurScraper());
+        scrapers.add(new MemegurScraper());
         return scrapers;
     }
 }

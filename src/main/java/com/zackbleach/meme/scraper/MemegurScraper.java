@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -52,9 +54,14 @@ public class MemegurScraper implements Scraper {
 
     public List<Example> getExamples(String code) {
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(MEMEGUR_EXAMPLE_API_URL+code);
-        Data data = target.request().get(Data.class);
-        return data.getExample();
+        log.info("Getting examples from: " + MEMEGUR_EXAMPLE_API_URL+code);
+        try {
+            WebTarget target = client.target(MEMEGUR_EXAMPLE_API_URL+code);
+            Data data = target.request().get(Data.class);
+            return data.getExample();
+        } catch (WebApplicationException e) {
+            return new ArrayList<Example>();
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown=true)
