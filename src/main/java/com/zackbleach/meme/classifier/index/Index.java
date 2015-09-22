@@ -91,6 +91,7 @@ public class Index {
         List<Document> documents = new ArrayList<Document>();
         DocumentBuilder builder = new GenericDocumentBuilder(featureExtractionMethod);
         for (ScrapedImage scrapedImage : scrapedImages) {
+            logger.info("Converting: " + scrapedImage.getSourceUrl() + " to document");
             Document document;
             try {
                 Meme meme = cache.getMeme(scrapedImage);

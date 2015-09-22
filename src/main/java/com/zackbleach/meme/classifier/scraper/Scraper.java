@@ -60,6 +60,7 @@ public class Scraper {
             }
         }
         logger.info("Finished updating cache");
+        logger.info("Returning: " + newMemes.size() + " memes");
         return newMemes;
     }
 
