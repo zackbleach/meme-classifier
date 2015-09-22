@@ -49,7 +49,9 @@ public class MemeClassificationController {
             JsonParseException, JsonMappingException, URISyntaxException,
             ExecutionException, BuildingIndexException {
         UrlValidator validator = new UrlValidator();
-        validator.isValid(url); //throws exception if not
+        if (!validator.isValid(url)) {
+           throw new URISyntaxException(url, "Invalid URL");
+        }
         BufferedImage image = imageUtils.getImageFromUrl(url);
         log.info("Classifying: " + url);
         ImageSearchHits hits = index.search(image);

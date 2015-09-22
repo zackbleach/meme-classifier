@@ -13,7 +13,7 @@ import com.zackbleach.meme.classifier.index.Index;
 public class FeatureExtractor {
 
     @Autowired
-    Class<? extends LireFeature> featureExtractionMethod;
+    public Class<? extends LireFeature> featureExtractionMethod;
 
     public LireFeature extractFeatures(BufferedImage image) {
         LireFeature feature;

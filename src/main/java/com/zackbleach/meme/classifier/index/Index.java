@@ -6,22 +6,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
-import net.semanticmetadata.lire.impl.ParallelImageSearcher;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 
 import org.apache.commons.logging.Log;
@@ -40,109 +36,86 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableList;
 import com.zackbleach.meme.classifier.cache.Meme;
 import com.zackbleach.meme.classifier.cache.MemeCache;
+import com.zackbleach.meme.classifier.scraper.Scraper;
 import com.zackbleach.meme.scraper.ScrapedImage;
-import com.zackbleach.meme.scraper.Scraper;
 
 @Component
 public class Index {
-
-    @Autowired
-    private Class<? extends LireFeature> featureExtractionMethod;
-
-    @Autowired
-    private MemeCache cache;
-
-    @Resource(name="scrapers")
-    private List<Scraper> scrapers;
-
-    private static final Log logger = LogFactory.getLog(Index.class);
-    private static final String INDEX_LOCATION = "meme-index/";
-    private static final int ONE_HOUR = 3600000;
-
-    private DocumentBuilder builder;
-    private IndexReader indexReader;
-    private IndexWriter indexWriter;
-
-    private Set<String> seenMemes = new HashSet<String>();
 
     public static String MEME_TYPE = "meme-type";
 
     // Initialised to true so that it blocks calls just after booting when it's scraping the first set of memes
     public boolean buildingIndex = true;
 
+    @Autowired
+    public Class<? extends LireFeature> featureExtractionMethod;
 
-    private List<ScrapedImage> getScrapedImages() {
-        List<ScrapedImage> images = new ArrayList<ScrapedImage>();
-        for (Scraper scraper : scrapers) {
-            images.addAll(scraper.scrape());
-        }
-        return images;
-    }
+    @Autowired
+    private Scraper scraper;
 
-    @Async
-    @Scheduled(fixedDelay = ONE_HOUR * 12)
-    private void update() throws URISyntaxException, IOException {
-        rebuildIndex();
-    }
+    @Autowired
+    private MemeCache cache;
 
-    private void rebuildIndex() throws URISyntaxException, IOException {
-        logger.warn("Total memes in index: " + indexReader.numDocs());
-        List<Document> documents = scrapeMemes();
-        buildingIndex = true;
-        add(documents);
-        buildingIndex = false;
-    }
+    private static final int ONE_HOUR = 3600000;
 
-    private List<Document> scrapeMemes() throws URISyntaxException {
-        List<Document> documents = new ArrayList<Document>();
-        for (ScrapedImage example : getScrapedImages()) {
-            if (!seenMemes.contains(example.getSourceUrl())) {
-                seenMemes.add(example.getSourceUrl());
-                Document document;
-                try {
-                    Meme meme = cache.getMeme(example);
-                    document = createDocument(meme);
-                } catch (IOException e) {
-                    logger.warn("Skipping: " + example.getSourceUrl());
-                    continue;
-                }
-                logger.warn("Adding meme to index: " + example.getName()
-                        + ". From: " + example.getSourceUrl());
-                documents.add(document);
-            }
-        }
-        return documents;
-    }
+    private static final Log logger = LogFactory.getLog(Index.class);
+
+    private String indexLocation = "meme-index/";
+    private IndexReader indexReader;
+    private IndexWriter indexWriter;
 
     @PostConstruct
-    private void create() throws IOException, URISyntaxException {
-        builder = new GenericDocumentBuilder(featureExtractionMethod);
-        File index = new File(INDEX_LOCATION);
+    public void create() throws IOException, URISyntaxException {
         indexWriter = getIndexWriter();
         indexReader = DirectoryReader.open(indexWriter, true);
     }
 
     @PreDestroy
-    private void shutdown() throws IOException {
+    public void shutdown() throws IOException {
         indexWriter.close();
     }
 
+    @Async
+    @Scheduled(fixedDelay = ONE_HOUR * 12)
+    public void update() throws URISyntaxException, IOException {
+        logger.warn("Total memes in index: " + indexReader.numDocs());
+        List<Document> documents = convertImagesToDocuments(scraper.getNewMemes());
+        buildingIndex = true;
+        add(documents);
+        buildingIndex = false;
+    }
+
+    private List<Document> convertImagesToDocuments(Set<ScrapedImage> scrapedImages) {
+        List<Document> documents = new ArrayList<Document>();
+        DocumentBuilder builder = new GenericDocumentBuilder(featureExtractionMethod);
+        for (ScrapedImage scrapedImage : scrapedImages) {
+            Document document;
+            try {
+                Meme meme = cache.getMeme(scrapedImage);
+                document = createDocument(meme, builder);
+            } catch (IOException | URISyntaxException e) {
+                logger.warn("Skipping: " + scrapedImage.getSourceUrl());
+                continue;
+            }
+            documents.add(document);
+        }
+        return documents;
+    }
+
+    private Document createDocument(Meme meme, DocumentBuilder builder) throws FileNotFoundException {
+        Document document = builder.createDocument(meme.getImage(),
+                meme.getSourceUrl());
+        document.add(new StoredField(Index.MEME_TYPE, meme.getName()));
+        return document;
+    }
     private IndexWriter getIndexWriter() throws IOException {
         IndexWriterConfig conf = new IndexWriterConfig(
                 LuceneUtils.LUCENE_VERSION, new WhitespaceAnalyzer(
                         LuceneUtils.LUCENE_VERSION));
         conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-        return new IndexWriter(FSDirectory.open(new File(INDEX_LOCATION)), conf);
-    }
-
-    public void add(String imageUrl, String name) throws IOException,
-            URISyntaxException {
-        Meme meme = cache.getMeme(new ScrapedImage(name, imageUrl));
-        Document document = createDocument(meme);
-        add(ImmutableList.of(document));
+        return new IndexWriter(FSDirectory.open(new File(indexLocation)), conf);
     }
 
     public void add(List<Document> documents) throws IOException {
@@ -158,10 +131,6 @@ public class Index {
         logger.info(indexReader.numDocs() + " Memes in index");
     }
 
-    public int getNumDocs() {
-        return indexReader.numDocs();
-    }
-
     public ImageSearchHits search(BufferedImage image) throws IOException,
             BuildingIndexException {
         if (buildingIndex) {
@@ -173,9 +142,14 @@ public class Index {
         return hits;
     }
 
+
+    public int getNumDocs() {
+        return indexReader.numDocs();
+    }
+
     public List<ScrapedImage> getAllDocs() {
         List<ScrapedImage> docs = new ArrayList<ScrapedImage>();
-        for (int i=0; i< indexReader.maxDoc(); i++) {
+        for (int i = 0; i < indexReader.maxDoc(); i++) {
             Document doc;
             try {
                 doc = indexReader.document(i);
@@ -190,10 +164,4 @@ public class Index {
         return docs;
     }
 
-        private Document createDocument(Meme meme) throws FileNotFoundException {
-            Document document = builder.createDocument(meme.getImage(),
-                    meme.getSourceUrl());
-            document.add(new StoredField(MEME_TYPE, meme.getName()));
-            return document;
-        }
 }
