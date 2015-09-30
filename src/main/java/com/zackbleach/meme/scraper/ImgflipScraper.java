@@ -76,7 +76,7 @@ public class ImgflipScraper implements Scraper {
     }
 
     private Document getPage(String url) throws IOException {
-        logger.warn("Getting URL: " + url);
+        logger.info("Getting URL: " + url);
         Document document = Jsoup
                 .connect(url)
                 .userAgent(

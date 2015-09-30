@@ -54,6 +54,7 @@ public class MemeClassificationController {
         }
         BufferedImage image = imageUtils.getImageFromUrl(url);
         log.info("Classifying: " + url);
+        log.info("Total memes in index: " + index.getNumDocs());
         ImageSearchHits hits = index.search(image);
         return new ResponseEntity<Result>(presentHits(hits).iterator().next(),
                 HttpStatus.OK);
