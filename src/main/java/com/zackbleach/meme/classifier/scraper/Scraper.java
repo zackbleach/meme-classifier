@@ -52,16 +52,16 @@ public class Scraper {
             logger.info("Finished adding memes to new memes");
         }
         logger.info("Updating seen meme cache");
+        Set<ScrapedImage> memesToAdd = new HashSet<ScrapedImage>();
         for (ScrapedImage image : newMemes) {
-            if (seenMemes.contains(image.getSourceUrl())) {
-                newMemes.remove(image);
-            } else {
+            if (!seenMemes.contains(image.getSourceUrl())) {
+                memesToAdd.add(image);
                 seenMemes.add(image.getSourceUrl());
             }
         }
         logger.info("Finished updating cache");
-        logger.info("Returning: " + newMemes.size() + " memes");
-        return newMemes;
+        logger.info("Returning: " + memesToAdd.size() + " memes");
+        return memesToAdd;
     }
 
     public List<com.zackbleach.meme.scraper.Scraper> getScrapers() {
