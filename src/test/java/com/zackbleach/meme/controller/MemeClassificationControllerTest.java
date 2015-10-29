@@ -93,6 +93,12 @@ public class MemeClassificationControllerTest {
             controller.classifyMeme("http://www.memes.com");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void givenNullUrl_whenClassifyingMeme_thenThrowIAE()
+            throws IOException, URISyntaxException, ExecutionException,
+            BuildingIndexException {
+            controller.classifyMeme(null);
+    }
 
     private BufferedImage readImageFromDisk(String path) throws IOException {
         File imageFile = new File(path);

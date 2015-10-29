@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -30,6 +27,9 @@ import com.zackbleach.meme.classifier.index.BuildingIndexException;
 import com.zackbleach.meme.classifier.index.Index;
 import com.zackbleach.meme.classifier.utils.ImageUtils;
 
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.ImageSearchHits;
+
 @Controller
 @Api(value = "Meme Classifier API", description = "Endpoints for classifying memes.")
 @RequestMapping("/meme")
@@ -48,6 +48,9 @@ public class MemeClassificationController {
     public ResponseEntity<Result> classifyMeme(String url) throws IOException,
             JsonParseException, JsonMappingException, URISyntaxException,
             ExecutionException, BuildingIndexException {
+        if (url == null) {
+            throw new IllegalArgumentException("Must provide URL");
+        }
         UrlValidator validator = new UrlValidator();
         if (!validator.isValid(url)) {
            throw new URISyntaxException(url, "Invalid URL");
